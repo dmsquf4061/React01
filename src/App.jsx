@@ -5,7 +5,6 @@ import NotFoundPage from './pages/not-found/page';
 import LandingPage from './pages/landing/page';
 
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
     <div 
