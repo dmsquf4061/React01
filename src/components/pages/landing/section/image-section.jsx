@@ -1,0 +1,172 @@
+import { X, Plus } from "lucide-react"
+
+const MAX_CASTING_IMAGES = 8
+
+export default function ImageSection({
+  castingItems = [],
+  mainImage,
+  theme,
+  sectionBg,
+  onSelectMain,
+  onDelete,
+  onOpenFilePicker,
+  fileInputRef,
+  onAddImages,
+  isDark,
+}) {
+  const safeCastingItems = (castingItems ?? []).slice(0, MAX_CASTING_IMAGES)
+  const canAddMore = safeCastingItems.length < MAX_CASTING_IMAGES
+
+  const handleAddImages = (e) => {
+    const remaining = MAX_CASTING_IMAGES - safeCastingItems.length
+    if (remaining <= 0) return
+
+    const limitedFiles = Array.from(e.target.files).slice(0, remaining)
+    const limited = {
+      ...e,
+      target: {
+        ...e.target,
+        files: limitedFiles,
+      },
+    }
+    onAddImages(limited)
+    e.target.value = ""
+  }
+
+  return (
+    <section
+      className={`
+        w-full rounded-[10px] p-5
+        lg:rounded-[20px] xl:rounded-[40px]
+        ${sectionBg}
+      `}
+      style={{
+        background: isDark
+          ? "linear-gradient(180deg, rgba(0,0,0,0.30) 0%, rgba(0,0,0,0.10) 100%)"
+          : "linear-gradient(180deg, rgba(255,255,255,0.30) 0%, rgba(255,255,255,0.10) 100%)",
+        backdropFilter: "blur(32px)",
+        WebkitBackdropFilter: "blur(32px)",
+        border: isDark
+          ? "1px solid rgba(0,0,0,0.28)"
+          : "1px solid rgba(255,255,255,0.28)",
+        boxShadow: isDark
+          ? "inset 0 1px 0 rgba(255,255,255,0.04), 0 10px 30px rgba(0,0,0,0.10)"
+          : "inset 0 1px 0 rgba(255,255,255,0.35), 0 10px 30px rgba(0,0,0,0.10)",
+      }}
+    >
+      {/* 헤더 */}
+      <div className="mb-4 flex items-start justify-between gap-3">
+        <p className={`text-left text-xl lg:mb-1 ${theme.text}`}>IMAGE EXAMPLES</p>
+
+        <p className={`shrink-0 pt-[2px] text-[11px] ${theme.subtext}`}>
+          {safeCastingItems.length}/{MAX_CASTING_IMAGES}
+        </p>
+      </div>
+
+      {/* 그리드 */}
+      <div className="h-auto md:h-[calc(100%-46px)] lg:h-auto flex items-center">
+        <div className="grid grid-cols-4 gap-2">
+          {Array.from({ length: MAX_CASTING_IMAGES }).map((_, index) => {
+            const item = safeCastingItems[index]
+            const isAddCell = !item && index === safeCastingItems.length && canAddMore
+
+            if (item) {
+              const isActive = mainImage === item.src
+
+              return (
+                <div key={item.id} className="relative">
+                  <button
+                    type="button"
+                    onClick={() => onSelectMain(item.src)}
+                    className="relative flex overflow-hidden rounded-[12px] transition hover:scale-[1.03] h-full w-full flex-1 aspect-square cursor-pointer"
+                    style={{
+                      background: isDark
+                        ? "rgba(255,255,255,0.06)"
+                        : "rgba(255,255,255,0.28)",
+                      border: isActive
+                        ? `2px solid ${theme.swatch}`
+                        : isDark
+                          ? "1px solid rgba(255,255,255,0.10)"
+                          : "1px solid rgba(255,255,255,0.40)",
+                      boxShadow: isActive
+                        ? `0 0 0 2px rgba(255,255,255,0.35)`
+                        : "none",
+                    }}
+                    aria-label={`select ${item.alt}`}
+                  >
+                    <img
+                      src={item.src}
+                      alt={item.alt}
+                      className="h-full w-full object-cover"
+                    />
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      onDelete(item.id)
+                    }}
+                    className="absolute -right-2 -top-2 z-20 flex h-5 w-5 items-center justify-center rounded-full bg-black/70 text-white shadow-md transition hover:bg-black"
+                    aria-label={`delete ${item.alt}`}
+                  >
+                    <X size={10} strokeWidth={2.5} />
+                  </button>
+                </div>
+              )
+            }
+
+            if (isAddCell) {
+              return (
+                <button
+                  key={`add-${index}`}
+                  type="button"
+                  onClick={onOpenFilePicker}
+                  className="flex items-center justify-center rounded-[12px] transition hover:scale-[1.03] h-full w-full flex-1 aspect-square cursor-pointer"
+                  style={{
+                    background: isDark
+                      ? "rgba(255,255,255,0.08)"
+                      : "rgba(255,255,255,0.45)",
+                    border: isDark
+                      ? "1px solid rgba(255,255,255,0.10)"
+                      : "1px solid rgba(255,255,255,0.35)",
+                  }}
+                  aria-label="add casting images"
+                >
+                  <Plus
+                    size={24}
+                    strokeWidth={1.8}
+                    className={isDark ? "text-white/70" : "text-stone-300"}
+                  />
+                </button>
+              )
+            }
+
+            return (
+              <div
+                key={`empty-${index}`}
+                className="h-[52px] w-[52px] rounded-[12px] sm:h-[56px] sm:w-[56px]"
+                style={{
+                  background: isDark
+                    ? "rgba(255,255,255,0.04)"
+                    : "rgba(255,255,255,0.18)",
+                  border: isDark
+                    ? "1px solid rgba(255,255,255,0.05)"
+                    : "1px solid rgba(255,255,255,0.15)",
+                }}
+              />
+            )
+          })}
+        </div>
+      </div>
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        multiple
+        className="hidden"
+        onChange={handleAddImages}
+      />
+    </section>
+  )
+}
