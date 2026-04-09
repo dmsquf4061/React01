@@ -74,7 +74,7 @@ export default function ImageSection({
               const isActive = mainImage === item.src
 
               return (
-                <div key={item.id} className="relative">
+                <div key={item.id} className="relative aspect-square">
                   <button
                     type="button"
                     onClick={() => onSelectMain(item.src)}
@@ -145,7 +145,7 @@ export default function ImageSection({
             return (
               <div
                 key={`empty-${index}`}
-                className="h-[52px] w-[52px] rounded-[12px] sm:h-[56px] sm:w-[56px]"
+                className="h-full w-full rounded-[12px] aspect-square"
                 style={{
                   background: isDark
                     ? "rgba(255,255,255,0.04)"

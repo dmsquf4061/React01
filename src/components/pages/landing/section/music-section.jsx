@@ -86,7 +86,6 @@ export default function MusicSection({
           </p>
         </div>
 
-        {/* 진행 바 */}
         <div className="w-full">
           <input
             type="range"
@@ -147,7 +146,7 @@ export default function MusicSection({
 
       <audio
         ref={audioRef}
-        preload="metadata"
+        preload="auto"
         className="hidden"
         onLoadedMetadata={onLoadedMetadata}
         onTimeUpdate={onTimeUpdate}
@@ -157,7 +156,6 @@ export default function MusicSection({
       >
         <source src={currentTrack.src} type="audio/mpeg" />
       </audio>
-
     </section>
   )
 }

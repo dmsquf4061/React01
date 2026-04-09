@@ -8,6 +8,7 @@ import MainSection from "./section/main-section"
 import ImageSection from "./section/image-section"
 import ColorSection from "./section/color-section"
 import MusicSection from "./section/music-section"
+import BookSection from "./section/book-section"
 import { supabase } from "@/lib/supabase"
 
 const MEMO_KEY = "landing_memo"
@@ -27,14 +28,14 @@ const STORE_NAME = "castingImages"
 const MAX_CASTING_IMAGES = 8
 
 const DEFAULT_CASTING_ITEMS = [
-  { id: "default-1", src: "/img/img10.jpg", alt: "casting 1", isDefault: true },
-  { id: "default-2", src: "/img/img11.jpg", alt: "casting 2", isDefault: true },
-  { id: "default-3", src: "/img/img12.jpg", alt: "casting 3", isDefault: true },
+  { id: "default-1", src: "./img/img10.jpg", alt: "casting 1", isDefault: true },
+  { id: "default-2", src: "./img/img11.jpg", alt: "casting 2", isDefault: true },
+  { id: "default-3", src: "./img/img12.jpg", alt: "casting 3", isDefault: true },
 ]
 
 const MUSIC_TRACKS = [
-  { id: "track-1", title: "Autumn Wind", artist: "Dyalla", src: "./music/autumn-wind.mp3" },
-  { id: "track-2", title: "Calcutta Sunset", artist: "E's Jammy Jams", src: "./music/calcutta-sunset.mp3" },
+  { id: "track-1", title: "Daydream", artist: "웬디(WENDY)", src: "./music/wendy-daydream.mp3" },
+  { id: "track-2", title: "One Summer Day", artist: "조 히사이시", src: "./music/조히사이시-OneSummerDay.mp3" },
   { id: "track-3", title: "Cold Blue", artist: "Astron", src: "./music/cold-blue.mp3" },
 ]
 
@@ -151,14 +152,12 @@ const DEFAULT_COLOR_THEME = COLOR_THEMES[0]
 function openImageDB() {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, DB_VERSION)
-
     request.onupgradeneeded = () => {
       const db = request.result
       if (!db.objectStoreNames.contains(STORE_NAME)) {
         db.createObjectStore(STORE_NAME, { keyPath: "id" })
       }
     }
-
     request.onsuccess = () => resolve(request.result)
     request.onerror = () => reject(request.error)
   })
@@ -213,7 +212,6 @@ function dist(a, b) {
 
 function roundedClipPath(w, h, r = 80, memoW, memoBottom, clip) {
   const { calendarW, calendarTop } = clip
-
   const pts = [
     [0, 0],
     [w - memoW * w, 0],
@@ -224,27 +222,21 @@ function roundedClipPath(w, h, r = 80, memoW, memoBottom, clip) {
     [calendarW * w, calendarTop * h],
     [0, calendarTop * h],
   ]
-
   const n = pts.length
   let d = ""
-
   for (let i = 0; i < n; i++) {
     const prev = pts[(i - 1 + n) % n]
     const curr = pts[i]
     const next = pts[(i + 1) % n]
-
     const d1 = dist(prev, curr)
     const d2 = dist(curr, next)
     const rr = Math.min(r, d1 / 2, d2 / 2)
-
     const p1 = lerp(curr, prev, rr / d1)
     const p2 = lerp(curr, next, rr / d2)
     const f = (v) => parseFloat(v.toFixed(2))
-
     d += i === 0 ? `M${f(p1[0])},${f(p1[1])}` : ` L${f(p1[0])},${f(p1[1])}`
     d += ` Q${f(curr[0])},${f(curr[1])} ${f(p2[0])},${f(p2[1])}`
   }
-
   return `path("${d} Z")`
 }
 
@@ -259,7 +251,7 @@ export default function Landing() {
   const [clip, setClip] = useState("")
   const [isLg, setIsLg] = useState(false)
   const [castingItems, setCastingItems] = useState(DEFAULT_CASTING_ITEMS)
-  const [mainImage, setMainImage] = useState("/img/img1.jpg")
+  const [mainImage, setMainImage] = useState("./img/img1.jpg")
   const [isCastingReady, setIsCastingReady] = useState(false)
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
@@ -304,12 +296,10 @@ export default function Landing() {
         .select("content")
         .eq("id", 1)
         .maybeSingle()
-
       if (error) {
         console.warn("memo fetch warning:", error.message)
         return
       }
-
       if (data?.content) {
         setMemo(data.content)
         localStorage.setItem(MEMO_KEY, data.content)
@@ -331,78 +321,58 @@ export default function Landing() {
     const initCastingImages = async () => {
       try {
         const alreadyInitialized = localStorage.getItem(CASTING_DEFAULTS_KEY)
-
         if (!alreadyInitialized) {
           for (const item of DEFAULT_CASTING_ITEMS) {
             await saveCastingImageToDB(item)
           }
           localStorage.setItem(CASTING_DEFAULTS_KEY, "true")
         }
-
         const savedItems = await getAllCastingImagesFromDB()
         const normalizedItems = savedItems.length ? savedItems : DEFAULT_CASTING_ITEMS
         setCastingItems(normalizedItems)
-
         const savedMainImage = localStorage.getItem(MAIN_IMAGE_KEY)
         const exists = normalizedItems.some((item) => item.src === savedMainImage)
-
         if (savedMainImage && exists) {
           setMainImage(savedMainImage)
         } else {
-          const fallback = normalizedItems[0]?.src || "/img/img1.jpg"
+          const fallback = normalizedItems[0]?.src || "./img/img1.jpg"
           setMainImage(fallback)
           localStorage.setItem(MAIN_IMAGE_KEY, fallback)
         }
       } catch (error) {
         console.warn("casting image init warning:", error)
         setCastingItems(DEFAULT_CASTING_ITEMS)
-        setMainImage("/img/img1.jpg")
+        setMainImage("./img/img1.jpg")
       } finally {
         setIsCastingReady(true)
       }
     }
-
     initCastingImages()
   }, [])
 
   useEffect(() => {
     const el = clipRef.current
     if (!el) return
-
     const update = () => {
       const w = el.offsetWidth
       const h = el.offsetHeight
       const vw = window.innerWidth
-
       const lg = vw >= 1024
       setIsLg(lg)
-
       if (!lg) {
         setClip("")
         return
       }
-
       const r = vw >= 1536 ? 60 : vw >= 1280 ? 50 : 38
-
       const memoW = MEMO_SIZE / w
       const memoBottom = MEMO_SIZE / h
-
       const calendarW = CALENDAR_BOX_W / w
       const calendarTop = 1 - CALENDAR_BOX_H / h
-
-      setClip(
-        roundedClipPath(w, h, r, memoW, memoBottom, {
-          calendarW,
-          calendarTop,
-        })
-      )
+      setClip(roundedClipPath(w, h, r, memoW, memoBottom, { calendarW, calendarTop }))
     }
-
     update()
-
     const ro = new ResizeObserver(update)
     ro.observe(clipRef.current)
-
     return () => ro.disconnect()
   }, [loadingDone, castingItems.length, mainImage])
 
@@ -419,7 +389,6 @@ export default function Landing() {
   useEffect(() => {
     const audio = audioRef.current
     if (!audio) return
-
     audio.pause()
     audio.load()
     setCurrentTime(0)
@@ -433,11 +402,9 @@ export default function Landing() {
     setMemoDate(now)
     localStorage.setItem(MEMO_KEY, nextMemo)
     localStorage.setItem(MEMO_KEY + "_date", now)
-
     const { error } = await supabase
       .from("memo")
       .upsert({ id: 1, content: nextMemo }, { onConflict: "id" })
-
     if (error) console.warn("memo save warning:", error.message)
   }
 
@@ -465,26 +432,21 @@ export default function Landing() {
   const handleAddCastingImages = async (e) => {
     const files = Array.from(e.target.files || [])
     if (!files.length) return
-
     const imageFiles = files.filter((file) => file.type.startsWith("image/"))
     if (!imageFiles.length) {
       e.target.value = ""
       return
     }
-
     const remainingSlots = MAX_CASTING_IMAGES - castingItems.length
     if (remainingSlots <= 0) {
       alert(`이미지는 최대 ${MAX_CASTING_IMAGES}개까지 추가할 수 있어요.`)
       e.target.value = ""
       return
     }
-
     const limitedFiles = imageFiles.slice(0, remainingSlots)
-
     if (imageFiles.length > remainingSlots) {
       alert(`최대 ${MAX_CASTING_IMAGES}개까지 가능해서 ${remainingSlots}개만 추가했어요.`)
     }
-
     try {
       const newItems = await Promise.all(
         limitedFiles.map(async (file, index) => {
@@ -497,13 +459,10 @@ export default function Landing() {
           }
         })
       )
-
       for (const item of newItems) {
         await saveCastingImageToDB(item)
       }
-
       setCastingItems((prev) => [...prev, ...newItems])
-
       if (newItems[0]) {
         handleSelectMainImage(newItems[0].src)
       }
@@ -517,14 +476,11 @@ export default function Landing() {
   const handleDeleteCastingImage = async (id) => {
     const target = castingItems.find((item) => item.id === id)
     if (!target) return
-
     const nextItems = castingItems.filter((item) => item.id !== id)
     if (!nextItems.length) return
-
     try {
       await deleteCastingImageFromDB(id)
       setCastingItems(nextItems)
-
       if (mainImage === target.src) {
         handleSelectMainImage(nextItems[0].src)
       }
@@ -544,7 +500,6 @@ export default function Landing() {
   const handleTogglePlay = async () => {
     const audio = audioRef.current
     if (!audio) return
-
     try {
       if (audio.paused) {
         await audio.play()
@@ -559,9 +514,7 @@ export default function Landing() {
   const handleSeek = (e) => {
     const audio = audioRef.current
     const nextTime = Number(e.target.value)
-
     if (!audio) return
-
     audio.currentTime = nextTime
     setCurrentTime(nextTime)
   }
@@ -634,6 +587,12 @@ export default function Landing() {
                     isDark={isDark}
                   />
 
+                  <BookSection
+                    theme={theme}
+                    panelBg={panelBg}
+                    isDark={isDark}
+                  />
+
                   <ColorSection
                     colorThemes={COLOR_THEMES}
                     selectedTheme={selectedTheme}
@@ -662,6 +621,9 @@ export default function Landing() {
                     onLoadedMetadata={(e) => {
                       setDuration(e.currentTarget.duration || 0)
                       setCurrentTime(0)
+                      if (loadingDone) {
+                        e.currentTarget.play().catch((err) => console.warn("autoplay warning:", err))
+                      }
                     }}
                     onTimeUpdate={(e) => {
                       setCurrentTime(e.currentTarget.currentTime || 0)
