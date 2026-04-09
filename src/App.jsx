@@ -10,7 +10,7 @@ function App() {
     <div 
       className="relative flex flex-col w-screen h-screen overflow-hidden"
     >
-      <BrowserRouter basename="/react01/">
+      <BrowserRouter basename="/React01/">
           <Routes>
             <Route path='/' element={<LandingPage />}/>
 
