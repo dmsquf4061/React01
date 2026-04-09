@@ -9,11 +9,11 @@ import {
 import Autoplay from "embla-carousel-autoplay"
 
 const BOOKS = [
-  { id: 1, src: "./public/img/img1.jpg", title: "Book 1" },
-  { id: 2, src: "./public/img/img2.jpg", title: "Book 2" },
-  { id: 3, src: "./public/img/img3.jpg", title: "Book 3" },
-  { id: 4, src: "./public/img/img4.jpg", title: "Book 4" },
-  { id: 5, src: "./public/img/img5.jpg", title: "Book 5" },
+  { id: 1, src: "./img/img1.jpg", title: "Book 1" },
+  { id: 2, src: "./img/img2.jpg", title: "Book 2" },
+  { id: 3, src: "./img/img3.jpg", title: "Book 3" },
+  { id: 4, src: "./img/img4.jpg", title: "Book 4" },
+  { id: 5, src: "./img/img5.jpg", title: "Book 5" },
 ]
 
 export default function BookSection({ theme, panelBg, isDark }) {
