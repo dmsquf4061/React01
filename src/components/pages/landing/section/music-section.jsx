@@ -1,3 +1,4 @@
+import { memo } from "react"
 import { SkipBack, SkipForward, Play, Pause, Volume2 } from "lucide-react"
 
 function formatTime(time) {
@@ -7,25 +8,51 @@ function formatTime(time) {
   return `${minutes}:${String(seconds).padStart(2, "0")}`
 }
 
-function PlayerRoundButton({ onClick, ariaLabel, children }) {
+const PlayerRoundButton = memo(function PlayerRoundButton({
+  onClick,
+  ariaLabel,
+  children,
+  isDark,
+}) {
   return (
     <button
       type="button"
       onClick={onClick}
       aria-label={ariaLabel}
-      className="flex h-8 w-8 shrink-0 cursor-pointer items-center justify-center rounded-full text-stone-500 transition hover:bg-white"
+      className={[
+        "group relative flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full cursor-pointer select-none",
+        "[transform:translateZ(0)] [backface-visibility:hidden]",
+        "[isolation:isolate] [contain:paint]",
+        "outline-none",
+        isDark ? "text-white" : "text-stone-600",
+      ].join(" ")}
       style={{
-        background: "linear-gradient(180deg, rgba(255,255,255,0.30) 0%, rgba(255,255,255,0.10) 100%)",
-        backdropFilter: "blur(32px)",
-        WebkitBackdropFilter: "blur(32px)",
-        border: "1px solid rgba(255,255,255,0.28)",
-        boxShadow: "inset 0 1px 0 rgba(255,255,255,0.35), 0 10px 30px rgba(0,0,0,0.10)",
+        background: isDark
+          ? "rgba(255,255,255,0.10)"
+          : "rgba(255,255,255,0.22)",
+        border: isDark
+          ? "1px solid rgba(255,255,255,0.16)"
+          : "1px solid rgba(255,255,255,0.28)",
+        boxShadow: isDark
+          ? "inset 0 1px 0 rgba(255,255,255,0.06), 0 6px 16px rgba(0,0,0,0.14)"
+          : "inset 0 1px 0 rgba(255,255,255,0.30), 0 6px 16px rgba(0,0,0,0.08)",
+        WebkitTapHighlightColor: "transparent",
       }}
     >
-      {children}
+      <span
+        aria-hidden="true"
+        className={[
+          "pointer-events-none absolute inset-0 rounded-full opacity-0",
+          "transition-opacity duration-150",
+          isDark ? "bg-white/10 group-hover:opacity-100" : "bg-white/35 group-hover:opacity-100",
+        ].join(" ")}
+      />
+      <span className="relative z-10 flex items-center justify-center [transform:translateZ(0)]">
+        {children}
+      </span>
     </button>
   )
-}
+})
 
 export default function MusicSection({
   currentTrack,
@@ -58,13 +85,15 @@ export default function MusicSection({
       className={`rounded-[10px] p-4 md:self-start lg:flex lg:rounded-[20px] lg:p-6 xl:rounded-[40px] flex-col gap-4 ${panelBg}`}
       style={{
         background: isDark
-          ? "linear-gradient(rgb(0 0 0 / 30%) 0%, rgb(0 0 0 / 10%) 100%)"
+          ? "linear-gradient(180deg, rgba(0,0,0,0.30) 0%, rgba(0,0,0,0.10) 100%)"
           : "linear-gradient(180deg, rgba(255,255,255,0.30) 0%, rgba(255,255,255,0.10) 100%)",
         backdropFilter: "blur(32px)",
         WebkitBackdropFilter: "blur(32px)",
-        border: isDark ? "1px solid rgb(0 0 0 / 28%)" : "1px solid rgba(255,255,255,0.28)",
+        border: isDark
+          ? "1px solid rgba(0,0,0,0.28)"
+          : "1px solid rgba(255,255,255,0.28)",
         boxShadow: isDark
-          ? "inset 0 1px 0 rgb(0 0 0 / 35%), 0px 10px 30px rgb(0 0 0 / 10%)"
+          ? "inset 0 1px 0 rgba(0,0,0,0.35), 0 10px 30px rgba(0,0,0,0.10)"
           : "inset 0 1px 0 rgba(255,255,255,0.35), 0 10px 30px rgba(0,0,0,0.10)",
       }}
     >
@@ -104,13 +133,14 @@ export default function MusicSection({
 
         <div className="flex w-full items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <PlayerRoundButton onClick={onPrev} ariaLabel="previous track">
+            <PlayerRoundButton onClick={onPrev} ariaLabel="previous track" isDark={isDark}>
               <SkipBack size={18} strokeWidth={2} />
             </PlayerRoundButton>
 
             <PlayerRoundButton
               onClick={onTogglePlay}
               ariaLabel={isPlaying ? "pause" : "play"}
+              isDark={isDark}
             >
               {isPlaying ? (
                 <Pause size={18} strokeWidth={2} />
@@ -119,13 +149,13 @@ export default function MusicSection({
               )}
             </PlayerRoundButton>
 
-            <PlayerRoundButton onClick={onNext} ariaLabel="next track">
+            <PlayerRoundButton onClick={onNext} ariaLabel="next track" isDark={isDark}>
               <SkipForward size={18} strokeWidth={2} />
             </PlayerRoundButton>
           </div>
 
           <div className="flex items-center justify-end gap-2">
-            <Volume2 className={`h-4 w-4 shrink-0 ${theme.subtext}`} />
+            <Volume2 className={`h-4 w-4 shrink-0 ${isDark ? "text-white/70" : theme.subtext}`} />
 
             <input
               type="range"

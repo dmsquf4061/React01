@@ -27,10 +27,12 @@ const DB_VERSION = 1
 const STORE_NAME = "castingImages"
 const MAX_CASTING_IMAGES = 8
 
+const BASE = import.meta.env.BASE_URL
+
 const DEFAULT_CASTING_ITEMS = [
-  { id: "default-1", src: "./img/img10.jpg", alt: "casting 1", isDefault: true },
-  { id: "default-2", src: "./img/img11.jpg", alt: "casting 2", isDefault: true },
-  { id: "default-3", src: "./img/img12.jpg", alt: "casting 3", isDefault: true },
+  { id: "default-1", src: `${BASE}img/img10.jpg`, alt: "casting 1", isDefault: true },
+  { id: "default-2", src: `${BASE}img/img11.jpg`, alt: "casting 2", isDefault: true },
+  { id: "default-3", src: `${BASE}img/img12.jpg`, alt: "casting 3", isDefault: true },
 ]
 
 const MUSIC_TRACKS = [
@@ -48,7 +50,7 @@ const THEMES = [
     accent: "bg-stone-900/50",
     calendarToday: "[&>button]:bg-stone-200/60",
     calendarSelected: "[&>button]:bg-stone-900 [&>button]:text-white [&>button]:hover:bg-stone-900",
-    calendarSelectedButton: "aria-selected:bg-stone-900 aria-selected:text-white aria-selected:hover:bg-stone-900",
+    calendarSelectedButton: "aria-selected:bg-stone-900 aria-selected:text-white aria-selected:hover:bg-stone-900 !transition-none",
     calendarCaption: "text-stone-900",
     calendarWeekday: "text-stone-400",
     castingTitle: "text-stone-700",
@@ -66,7 +68,7 @@ const THEMES = [
     accent: "bg-white/50",
     calendarToday: "[&>button]:bg-white/20",
     calendarSelected: "[&>button]:bg-white [&>button]:text-stone-900 [&>button]:hover:bg-white",
-    calendarSelectedButton: "aria-selected:bg-white aria-selected:text-stone-900 aria-selected:hover:bg-white",
+    calendarSelectedButton: "aria-selected:bg-white aria-selected:text-stone-900 aria-selected:hover:bg-white !transition-none",
     calendarCaption: "text-white",
     calendarWeekday: "text-white/60",
     castingTitle: "text-white",
@@ -83,7 +85,7 @@ const THEMES = [
     accent: "bg-blue-400/50",
     calendarToday: "[&>button]:bg-blue-200/60",
     calendarSelected: "[&>button]:bg-blue-700 [&>button]:text-white [&>button]:hover:bg-blue-700",
-    calendarSelectedButton: "aria-selected:bg-blue-700 aria-selected:text-white aria-selected:hover:bg-blue-700",
+    calendarSelectedButton: "aria-selected:bg-blue-700 aria-selected:text-white aria-selected:hover:bg-blue-700 !transition-none",
     calendarCaption: "text-blue-900",
     calendarWeekday: "text-blue-400",
     castingTitle: "text-blue-900",
@@ -100,7 +102,7 @@ const THEMES = [
     accent: "bg-green-400/50",
     calendarToday: "[&>button]:bg-green-200/60",
     calendarSelected: "[&>button]:bg-green-700 [&>button]:text-white [&>button]:hover:bg-green-700",
-    calendarSelectedButton: "aria-selected:bg-green-700 aria-selected:text-white aria-selected:hover:bg-green-700",
+    calendarSelectedButton: "aria-selected:bg-green-700 aria-selected:text-white aria-selected:hover:bg-green-700 !transition-none",
     calendarCaption: "text-green-900",
     calendarWeekday: "text-green-400",
     castingTitle: "text-green-900",
@@ -117,7 +119,7 @@ const THEMES = [
     accent: "bg-pink-300/50",
     calendarToday: "[&>button]:bg-pink-200/60",
     calendarSelected: "[&>button]:bg-pink-700 [&>button]:text-white [&>button]:hover:bg-pink-700",
-    calendarSelectedButton: "aria-selected:bg-pink-700 aria-selected:text-white aria-selected:hover:bg-pink-700",
+    calendarSelectedButton: "aria-selected:bg-pink-700 aria-selected:text-white aria-selected:hover:bg-pink-700 !transition-none",
     calendarCaption: "text-pink-900",
     calendarWeekday: "text-pink-400",
     castingTitle: "text-pink-900",
@@ -134,7 +136,7 @@ const THEMES = [
     accent: "bg-amber-400/50",
     calendarToday: "[&>button]:bg-amber-200/60",
     calendarSelected: "[&>button]:bg-amber-700 [&>button]:text-white [&>button]:hover:bg-amber-700",
-    calendarSelectedButton: "aria-selected:bg-amber-700 aria-selected:text-white aria-selected:hover:bg-amber-700",
+    calendarSelectedButton: "aria-selected:bg-amber-700 aria-selected:text-white aria-selected:hover:bg-amber-700 !transition-none",
     calendarCaption: "text-amber-900",
     calendarWeekday: "text-amber-400",
     castingTitle: "text-amber-900",
@@ -251,7 +253,7 @@ export default function Landing() {
   const [clip, setClip] = useState("")
   const [isLg, setIsLg] = useState(false)
   const [castingItems, setCastingItems] = useState(DEFAULT_CASTING_ITEMS)
-  const [mainImage, setMainImage] = useState("./img/img1.jpg")
+  const [mainImage, setMainImage] = useState(`${BASE}img/img10.jpg`)
   const [isCastingReady, setIsCastingReady] = useState(false)
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0)
   const [isPlaying, setIsPlaying] = useState(false)
@@ -335,14 +337,14 @@ export default function Landing() {
         if (savedMainImage && exists) {
           setMainImage(savedMainImage)
         } else {
-          const fallback = normalizedItems[0]?.src || "./img/img1.jpg"
+          const fallback = normalizedItems[0]?.src || `${BASE}img/img10.jpg`
           setMainImage(fallback)
           localStorage.setItem(MAIN_IMAGE_KEY, fallback)
         }
       } catch (error) {
         console.warn("casting image init warning:", error)
         setCastingItems(DEFAULT_CASTING_ITEMS)
-        setMainImage("./img/img1.jpg")
+        setMainImage(`${BASE}img/img10.jpg`)
       } finally {
         setIsCastingReady(true)
       }
@@ -568,7 +570,7 @@ export default function Landing() {
                 memoDate={memoDate}
                 onMemoOpen={() => setMemoOpen(true)}
                 date={date}
-                onDateChange={setDate}
+                onDateChange={(d) => { if (d) setDate(d) }}
               />
 
               <aside className="w-full lg:w-[400px] lg:shrink-0">

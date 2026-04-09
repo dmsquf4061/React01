@@ -54,7 +54,6 @@ export default function ImageSection({
           : "inset 0 1px 0 rgba(255,255,255,0.35), 0 10px 30px rgba(0,0,0,0.10)",
       }}
     >
-      {/* 헤더 */}
       <div className="mb-4 flex items-start justify-between gap-3">
         <p className={`text-left text-xl lg:mb-1 ${theme.text}`}>IMAGE EXAMPLES</p>
 
@@ -63,8 +62,7 @@ export default function ImageSection({
         </p>
       </div>
 
-      {/* 그리드 */}
-      <div className="h-auto md:h-[calc(100%-46px)] lg:h-auto flex items-center">
+      <div className="flex h-auto items-center md:h-[calc(100%-46px)] lg:h-auto">
         <div className="grid grid-cols-4 gap-2">
           {Array.from({ length: MAX_CASTING_IMAGES }).map((_, index) => {
             const item = safeCastingItems[index]
@@ -78,7 +76,12 @@ export default function ImageSection({
                   <button
                     type="button"
                     onClick={() => onSelectMain(item.src)}
-                    className="relative flex overflow-hidden rounded-[12px] transition hover:scale-[1.03] h-full w-full flex-1 aspect-square cursor-pointer"
+                    className={`
+                      group relative flex h-full w-full flex-1 aspect-square cursor-pointer overflow-hidden rounded-[12px]
+                      [transform:translateZ(0)] [backface-visibility:hidden]
+                      [isolation:isolate] [contain:paint]
+                      outline-none
+                    `}
                     style={{
                       background: isDark
                         ? "rgba(255,255,255,0.06)"
@@ -91,13 +94,22 @@ export default function ImageSection({
                       boxShadow: isActive
                         ? `0 0 0 2px rgba(255,255,255,0.35)`
                         : "none",
+                      WebkitTapHighlightColor: "transparent",
                     }}
                     aria-label={`select ${item.alt}`}
                   >
+                    <span
+                      aria-hidden="true"
+                      className={`
+                        pointer-events-none absolute inset-0 z-10 rounded-[12px]
+                        opacity-0 transition-opacity duration-150
+                        ${isDark ? "bg-white/8 group-hover:opacity-100" : "bg-white/20 group-hover:opacity-100"}
+                      `}
+                    />
                     <img
                       src={item.src}
                       alt={item.alt}
-                      className="h-full w-full object-cover"
+                      className="relative z-0 h-full w-full object-cover [transform:translateZ(0)] [backface-visibility:hidden]"
                     />
                   </button>
 
@@ -107,10 +119,23 @@ export default function ImageSection({
                       e.stopPropagation()
                       onDelete(item.id)
                     }}
-                    className="absolute -right-2 -top-2 z-20 flex h-5 w-5 items-center justify-center rounded-full bg-black/70 text-white shadow-md transition hover:bg-black"
+                    className={`
+                      absolute -right-2 -top-2 z-20 flex h-5 w-5 items-center justify-center rounded-full
+                      text-white shadow-md
+                      [transform:translateZ(0)] [backface-visibility:hidden]
+                      [isolation:isolate] [contain:paint]
+                    `}
+                    style={{
+                      background: "rgba(0,0,0,0.70)",
+                      WebkitTapHighlightColor: "transparent",
+                    }}
                     aria-label={`delete ${item.alt}`}
                   >
-                    <X size={10} strokeWidth={2.5} />
+                    <span
+                      aria-hidden="true"
+                      className="pointer-events-none absolute inset-0 rounded-full bg-white/0 opacity-0 transition-opacity duration-150 hover:opacity-100"
+                    />
+                    <X size={10} strokeWidth={2.5} className="relative z-10" />
                   </button>
                 </div>
               )
@@ -122,7 +147,12 @@ export default function ImageSection({
                   key={`add-${index}`}
                   type="button"
                   onClick={onOpenFilePicker}
-                  className="flex items-center justify-center rounded-[12px] transition hover:scale-[1.03] h-full w-full flex-1 aspect-square cursor-pointer"
+                  className={`
+                    group relative flex h-full w-full flex-1 aspect-square cursor-pointer items-center justify-center overflow-hidden rounded-[12px]
+                    [transform:translateZ(0)] [backface-visibility:hidden]
+                    [isolation:isolate] [contain:paint]
+                    outline-none
+                  `}
                   style={{
                     background: isDark
                       ? "rgba(255,255,255,0.08)"
@@ -130,13 +160,22 @@ export default function ImageSection({
                     border: isDark
                       ? "1px solid rgba(255,255,255,0.10)"
                       : "1px solid rgba(255,255,255,0.35)",
+                    WebkitTapHighlightColor: "transparent",
                   }}
                   aria-label="add casting images"
                 >
+                  <span
+                    aria-hidden="true"
+                    className={`
+                      pointer-events-none absolute inset-0 rounded-[12px]
+                      opacity-0 transition-opacity duration-150
+                      ${isDark ? "bg-white/10 group-hover:opacity-100" : "bg-white/25 group-hover:opacity-100"}
+                    `}
+                  />
                   <Plus
                     size={24}
                     strokeWidth={1.8}
-                    className={isDark ? "text-white/70" : "text-stone-300"}
+                    className={`relative z-10 ${isDark ? "text-white/70" : "text-stone-600"}`}
                   />
                 </button>
               )
@@ -145,7 +184,7 @@ export default function ImageSection({
             return (
               <div
                 key={`empty-${index}`}
-                className="h-full w-full rounded-[12px] aspect-square"
+                className="aspect-square h-full w-full rounded-[12px]"
                 style={{
                   background: isDark
                     ? "rgba(255,255,255,0.04)"
@@ -159,6 +198,7 @@ export default function ImageSection({
           })}
         </div>
       </div>
+
       <input
         ref={fileInputRef}
         type="file"

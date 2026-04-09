@@ -34,7 +34,7 @@ export default function ColorSection({
               border: t.swatchBorder ? "0.5px solid #ccc" : "none",
               outline:
                 selectedTheme.id === t.id
-                  ? `2px solid ${isDark ? "#fff" : "#bbb"}`
+                  ? `2px solid ${isDark ? "#fff" : "#5b5b5b"}`
                   : "1px solid rgba(255, 255, 255, 0.2)",
               outlineOffset: 
                 selectedTheme.id === t.id

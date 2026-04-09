@@ -22,8 +22,11 @@ export default function CalendarSection({ date, onDateChange, theme, isDark }) {
       <Calendar
         mode="single"
         selected={date}
-        onSelect={onDateChange}
-        className="h-full w-full bg-white/0 p-0"
+        onSelect={(d) => {
+          onDateChange(d || date)
+        }}
+        required
+        className={`h-full w-full bg-white/0 p-0 ${isDark ? "dark-calendar" : ""}`}
         components={{
           Chevron: ({ orientation, className }) =>
             orientation === "left" ? (
@@ -38,22 +41,33 @@ export default function CalendarSection({ date, onDateChange, theme, isDark }) {
           month_caption: "m-0 flex items-center justify-between text-lg",
           caption_label: `mt-0 text-base font-semibold ${theme.calendarCaption}`,
           nav: "flex items-center gap-2",
-          button_previous:
-            "inline-flex h-9 w-9 items-center justify-center rounded-full border border-input bg-background/40 shadow-sm hover:bg-white/50 cursor-pointer",
-          button_next:
-            "inline-flex h-9 w-9 items-center justify-center rounded-full border border-input bg-background/40 shadow-sm hover:bg-white/50 cursor-pointer",
-          chevron: `h-5 w-5 ${theme.calendarCaption}`,
+          button_previous: `
+  inline-flex h-9 w-9 items-center justify-center rounded-full cursor-pointer
+  !transition-none
+  bg-[linear-gradient(180deg,rgba(255,255,255,0.30)_0%,rgba(255,255,255,0.10)_100%)]
+  border border-white/30
+`,
+
+button_next: `
+  inline-flex h-9 w-9 items-center justify-center rounded-full cursor-pointer
+  !transition-none
+  bg-[linear-gradient(180deg,rgba(255,255,255,0.30)_0%,rgba(255,255,255,0.10)_100%)]
+  border border-white/30
+`,
+          chevron: `relative z-10 h-5 w-5 ${theme.calendarCaption}`,
           month_grid: "w-full table-fixed border-collapse",
           weekdays: "w-full",
           weekday: `pb-0 text-center text-[12px] font-medium ${theme.calendarWeekday}`,
           weeks: "w-full",
           week: "mt-2 w-full",
-          day: "p-0 text-center [--cell-size:2.5rem] [--cell-radius:9999px]",
           today: `${theme.calendarToday}`,
-          selected: `${theme.calendarSelected}`,
           outside: "opacity-30",
           disabled: "opacity-30",
-          day_button: `${theme.text} ${theme.calendarSelectedButton} cursor-pointer`,
+          selected: isDark ? "" : `${theme.calendarSelected}`,
+          day: "p-0 text-center [--cell-size:2.5rem] [--cell-radius:9999px]",
+          day_button: isDark
+  ? `h-10 w-10 cursor-pointer rounded-full text-white outline-none border-none ring-0 !transition-none active:scale-90 active:opacity-70`
+  : `${theme.text} ${theme.calendarSelectedButton} cursor-pointer outline-none border-none ring-0 active:scale-90`,
         }}
       />
     </section>

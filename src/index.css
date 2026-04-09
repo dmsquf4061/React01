@@ -294,3 +294,14 @@ code {
   height: 8px;
   border-radius: 9999px;
 }
+
+.dark-calendar [data-selected-single="true"] {
+  background-color: white !important;
+  color: black !important;
+  border-radius: 9999px !important;
+  opacity: 1 !important;
+}
+
+.dark-calendar td button:hover {
+  background-color: rgba(255, 255, 255, 0.5) !important;
+}
