@@ -18,26 +18,33 @@ const BOOKS = [
 
 export default function BookSection({ theme, panelBg, isDark }) {
   return (
-    <section
-      className={`rounded-[20px] p-4 ${panelBg} backdrop-blur-md`}
-      style={{
+<section
+    className={`rounded-[20px] p-4 ${panelBg} backdrop-blur-md`}
+    style={{
         border: isDark
-          ? "1px solid rgba(255,255,255,0.12)"
-          : "1px solid rgba(255,255,255,0.28)",
+        ? "1px solid rgba(255,255,255,0.12)"
+        : "1px solid rgba(255,255,255,0.28)",
         overflow: "visible",
-      }}
+    }}
     >
-      <p className={`text-left text-xl lg:mb-1 ${theme.text}`}>BOOK</p>
-
-      <Carousel
+    <Carousel
         opts={{ align: "center", loop: true }}
         plugins={[Autoplay({ delay: 3000, stopOnInteraction: false })]}
         className="w-full overflow-visible"
-      >
-        <CarouselContent className="-ml-2 overflow-visible">
+    >
+        <div className="flex items-center justify-between mb-3">
+        <p className={`text-left text-xl ${theme.text}`}>BOOK</p>
+        <div className="flex gap-1">
+            <CarouselPrevious className="static translate-y-0 cursor-pointer" />
+            <CarouselNext className="static translate-y-0 cursor-pointer" />
+        </div>
+        </div>
+
+        <CarouselContent className="-ml-2 overflow-visible ">
           {BOOKS.map((book) => (
             <CarouselItem key={book.id} className="pl-2 basis-[50%]">
                 <div
+                    className="cursor-pointer"
                     style={{ position: "relative", height: "240px", overflow: "visible" }}
                     onMouseEnter={(e) => {
                     e.currentTarget.querySelector(".book-cover").style.transform =
@@ -90,9 +97,6 @@ export default function BookSection({ theme, panelBg, isDark }) {
                 </CarouselItem>
           ))}
         </CarouselContent>
-
-        <CarouselPrevious className="left-1" />
-        <CarouselNext className="right-1" />
       </Carousel>
     </section>
   )
