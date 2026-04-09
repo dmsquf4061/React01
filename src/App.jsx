@@ -10,12 +10,12 @@ function App() {
     <div 
       className="relative flex flex-col w-screen h-screen overflow-hidden"
     >
-      <BrowserRouter basename='/react01/'>
+      <BrowserRouter basename="/react01/">
           <Routes>
-            <Route path='/' element={<LandingPage />}></Route>
+            <Route path='/' element={<LandingPage />}/>
 
             {/* 에러 페이지 */}
-            <Route path='*' element={<NotFoundPage />}></Route>
+            <Route path='*' element={<NotFoundPage />} />
           </Routes>
       </BrowserRouter>
     </div>
