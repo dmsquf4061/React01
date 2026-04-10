@@ -34,8 +34,8 @@ export default function BookSection({ theme, panelBg, isDark }) {
       ? "1px solid rgba(0,0,0,0.28)"
       : "1px solid rgba(255,255,255,0.28)",
     boxShadow: isDark
-      ? "inset 0 1px 0 rgba(255,255,255,0.04), 0 10px 30px rgba(0,0,0,0.18)"
-      : "inset 0 1px 0 rgba(255,255,255,0.35), 0 10px 30px rgba(0,0,0,0.10)",
+      ? "inset 0 1px 0 rgba(255,255,255,0.04), 0 4px 10px rgba(0,0,0,0.18)"
+      : "inset 0 1px 0 rgba(255,255,255,0.35), 0 4px 10px rgba(0,0,0,0.10)",
   }
 
   const navStyle = {
@@ -46,8 +46,8 @@ export default function BookSection({ theme, panelBg, isDark }) {
       ? "1px solid rgba(255,255,255,0.18)"
       : "1px solid rgba(255,255,255,0.28)",
     boxShadow: isDark
-      ? "inset 0 1px 0 rgba(255,255,255,0.08), 0 8px 20px rgba(0,0,0,0.18)"
-      : "inset 0 1px 0 rgba(255,255,255,0.35), 0 8px 20px rgba(0,0,0,0.10)",
+      ? "inset 0 1px 0 rgba(255,255,255,0.08), 0 4px 6px rgba(0,0,0,0.18)"
+      : "inset 0 1px 0 rgba(255,255,255,0.35), 0 4px 6px rgba(0,0,0,0.10)",
     WebkitTapHighlightColor: "transparent",
   }
 
@@ -80,9 +80,9 @@ export default function BookSection({ theme, panelBg, isDark }) {
       <Carousel
         opts={{ align: "center", loop: true }}
         plugins={[autoplay.current]}
-        className="w-full overflow-visible"
+        className="w-full overflow-visible h-full flex flex-col justify-between"
       >
-        <div className="mb-3 flex items-center justify-between px-4 lg:px-6">
+        <div className="flex items-center justify-between px-4 lg:px-6 mb-4">
           <p className={`text-left text-xl ${theme.text}`}>BOOK</p>
 
           <div className="flex items-center gap-1">
@@ -91,19 +91,19 @@ export default function BookSection({ theme, panelBg, isDark }) {
           </div>
         </div>
 
-        <CarouselContent className="-ml-2 overflow-visible">
+        <CarouselContent className="-ml-2 overflow-visible h-full">
           {BOOKS.map((book) => (
-            <CarouselItem key={book.id} className="basis-[50%] pl-2">
+            <CarouselItem key={book.id} className="basis-[50%] pl-2 max-w-[220px] min-w-[220px]">
               <div
-                className="cursor-pointer"
+                className="cursor-pointer flex items-end"
                 style={{
                   position: "relative",
-                  height: "240px",
+                  height: "280px",
                   overflow: "visible",
                 }}
                 onMouseEnter={(e) => {
                   const cover = e.currentTarget.querySelector(".book-cover")
-                  if (cover) cover.style.transform = "translateX(-50%) translateY(-30px)"
+                  if (cover) cover.style.transform = "translateX(-50%) translateY(-20px)"
                 }}
                 onMouseLeave={(e) => {
                   const cover = e.currentTarget.querySelector(".book-cover")
@@ -120,7 +120,7 @@ export default function BookSection({ theme, panelBg, isDark }) {
                     left: "50%",
                     transform: "translateX(-50%) translateY(0px)",
                     width: "calc(100% - 30px)",
-                    height: "190px",
+                    height: "240px",
                     borderRadius: "6px",
                     objectFit: "cover",
                     objectPosition: "center",

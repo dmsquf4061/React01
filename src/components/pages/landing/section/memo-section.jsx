@@ -9,7 +9,7 @@ export default function MemoSection({
 
   return (
     <div
-      className="z-20 lg:absolute h-full"
+      className="z-20 relative lg:absolute h-full overflow-visible"
       style={{
         top: 0,
         right: 0,
@@ -18,15 +18,16 @@ export default function MemoSection({
       }}
     >
       {/* 테이프 - relative wrapper 제거 */}
+
       <div
-        className={`absolute right-6 z-30 h-6 w-24 -top-2 rotate-[6deg] shadow-sm lg:top-3 ${theme.accent}`}
+        className={`absolute right-6 z-30 h-6 w-24 -top-1 rotate-[6deg] shadow-sm ${theme.accent}`}
       />
 
-      <div className="flex h-full w-full items-stretch p-0 lg:pb-4 lg:pl-4">
+      <div className="flex h-full w-full items-stretch p-0 lg:pb-4 lg:pl-4 overflow-visible">
         <button
           type="button"
           onClick={onMemoOpen}
-          className="relative flex h-full h-[220px] w-full flex-col justify-center gap-2 overflow-hidden rounded-[10px] px-4 py-6 text-left lg:h-full lg:rounded-[20px] lg:px-6 lg:py-10 xl:rounded-[40px]"
+          className="relative flex min-h-[260px] h-full h-[220px] w-full flex-col justify-center gap-2 rounded-[10px] p-4 lg:justify-between text-left lg:h-full lg:rounded-[20px] lg:p-6 xl:rounded-[40px]"
           style={{
             background: isDark ? "linear-gradient(rgb(0 0 0 / 30%) 0%, rgb(0 0 0 / 10%) 100%)" : "linear-gradient(180deg, rgba(255,255,255,0.30) 0%, rgba(255,255,255,0.10) 100%)",
             backdropFilter: "blur(32px)",
@@ -34,7 +35,7 @@ export default function MemoSection({
             border: isDark ? "1px solid rgb(0 0 0 / 28%)" : "1px solid rgba(255,255,255,0.28)",
             boxShadow: isDark
               ? "inset 0 1px 0 rgb(0 0 0 / 35%), 0px 10px 30px rgb(0 0 0 / 10%)"
-              : "inset 0 1px 0 rgba(255,255,255,0.35), 0 10px 30px rgba(0,0,0,0.10)",
+              : "inset 0 1px 0 rgba(255,255,255,0.35), 0 4px 10px rgba(0,0,0,0.10)",
           }}
         >
           <div className="w-full text-center lg:text-left">

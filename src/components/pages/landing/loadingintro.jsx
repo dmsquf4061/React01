@@ -21,7 +21,7 @@ export default function LoadingIntro({ onComplete }) {
 
   return (
     <div
-      className="flex min-h-screen flex-col items-center justify-center bg-black text-white"
+      className="flex min-h-screen flex-col items-center justify-center bg-black text-white gap-5"
       style={{ cursor: ready ? "pointer" : "default" }}
       onClick={() => {
         if (ready) onComplete?.()

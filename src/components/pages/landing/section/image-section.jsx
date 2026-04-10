@@ -36,8 +36,8 @@ export default function ImageSection({
   return (
     <section
       className={`
-        w-full rounded-[10px] p-5
-        lg:rounded-[20px] xl:rounded-[40px]
+        w-full rounded-[10px] p-4 lg:p-6
+        lg:rounded-[20px] xl:rounded-[40px] flex flex-col
         ${sectionBg}
       `}
       style={{
@@ -50,8 +50,8 @@ export default function ImageSection({
           ? "1px solid rgba(0,0,0,0.28)"
           : "1px solid rgba(255,255,255,0.28)",
         boxShadow: isDark
-          ? "inset 0 1px 0 rgba(255,255,255,0.04), 0 10px 30px rgba(0,0,0,0.10)"
-          : "inset 0 1px 0 rgba(255,255,255,0.35), 0 10px 30px rgba(0,0,0,0.10)",
+          ? "inset 0 1px 0 rgba(255,255,255,0.04), 0 4px 10px rgba(0,0,0,0.10)"
+          : "inset 0 1px 0 rgba(255,255,255,0.35), 0 4px 10px rgba(0,0,0,0.10)",
       }}
     >
       <div className="mb-4 flex items-start justify-between gap-3">
@@ -62,8 +62,8 @@ export default function ImageSection({
         </p>
       </div>
 
-      <div className="flex h-auto items-center md:h-[calc(100%-46px)] lg:h-auto">
-        <div className="grid grid-cols-4 gap-2">
+      <div className="flex h-auto items-center md:h-[calc(100%-46px)] lg:h-full lg:items-end">
+        <div className="grid grid-cols-4 gap-2 w-full">
           {Array.from({ length: MAX_CASTING_IMAGES }).map((_, index) => {
             const item = safeCastingItems[index]
             const isAddCell = !item && index === safeCastingItems.length && canAddMore
@@ -126,7 +126,7 @@ export default function ImageSection({
                       [isolation:isolate] [contain:paint]
                     `}
                     style={{
-                      background: "rgba(0,0,0,0.70)",
+                      background: "rgb(0 0 0 / 41%)",
                       WebkitTapHighlightColor: "transparent",
                     }}
                     aria-label={`delete ${item.alt}`}

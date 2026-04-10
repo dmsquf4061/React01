@@ -82,7 +82,7 @@ export default function MusicSection({
 
   return (
     <section
-      className={`rounded-[10px] p-4 md:self-start lg:flex lg:rounded-[20px] lg:p-6 xl:rounded-[40px] flex-col gap-4 ${panelBg}`}
+      className={`rounded-[10px] p-4 md:self-start lg:flex lg:rounded-[20px] lg:p-6 xl:rounded-[40px] flex-col gap-4 h-full ${panelBg} justify-between`}
       style={{
         background: isDark
           ? "linear-gradient(180deg, rgba(0,0,0,0.30) 0%, rgba(0,0,0,0.10) 100%)"
@@ -94,7 +94,7 @@ export default function MusicSection({
           : "1px solid rgba(255,255,255,0.28)",
         boxShadow: isDark
           ? "inset 0 1px 0 rgba(0,0,0,0.35), 0 10px 30px rgba(0,0,0,0.10)"
-          : "inset 0 1px 0 rgba(255,255,255,0.35), 0 10px 30px rgba(0,0,0,0.10)",
+          : "inset 0 1px 0 rgba(255,255,255,0.35), 0 4px 10px rgba(0,0,0,0.10)",
       }}
     >
       <div className="flex items-start justify-between gap-4">
@@ -125,7 +125,7 @@ export default function MusicSection({
             onChange={onSeek}
             className="music-range h-2 w-full cursor-pointer appearance-none rounded-full"
             style={{
-              background: `linear-gradient(to right, ${theme.swatch} 0%, ${theme.swatch} ${progressPercent}%, #d1d5db ${progressPercent}%, #d1d5db 100%)`,
+              background: `linear-gradient(to right, ${theme.swatch} 0%, ${theme.swatch} ${progressPercent}%, #fff ${progressPercent}%, #fff 100%)`,
               ["--range-thumb-color"]: theme.swatch,
             }}
           />
@@ -166,7 +166,7 @@ export default function MusicSection({
               onChange={onVolumeChange}
               className="music-range h-2 w-24 cursor-pointer appearance-none rounded-full sm:w-28"
               style={{
-                background: `linear-gradient(to right, ${theme.swatch} 0%, ${theme.swatch} ${volumePercent}%, #d1d5db ${volumePercent}%, #d1d5db 100%)`,
+                background: `linear-gradient(to right, ${theme.swatch} 0%, ${theme.swatch} ${volumePercent}%, #fff ${volumePercent}%, #fff 100%)`,
                 ["--range-thumb-color"]: theme.swatch,
               }}
             />

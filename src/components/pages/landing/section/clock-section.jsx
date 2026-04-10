@@ -27,14 +27,14 @@ export default function ClockSection({ isDark }) {
       className="
         pointer-events-none
         absolute z-20
-        left-4 bottom-[470px]
+        left-4 bottom-4
         flex items-center justify-center
         rounded-[14px]
         px-4
 
         w-[220px] h-[72px]
-        lg:left-4 lg:bottom-[470px] lg:rounded-[18px]
-        xl:left-5 xl:bottom-[470px] lg:w-[345px] xl:w-[340px] lg:h-[100px] xl:rounded-[30px]
+        lg:left-4 lg:bottom-[480px] lg:rounded-[18px]
+        xl:left-5 xl:bottom-[480px] lg:w-[345px] xl:w-[340px] lg:h-[100px] xl:rounded-[30px]
 
         text-white
       "
@@ -51,8 +51,8 @@ export default function ClockSection({ isDark }) {
           : "1px solid rgba(255,255,255,0.28)",
 
         boxShadow: isDark
-          ? "inset 0 1px 0 rgba(255,255,255,0.04), 0 10px 30px rgba(0,0,0,0.10)"
-          : "inset 0 1px 0 rgba(255,255,255,0.35), 0 10px 30px rgba(0,0,0,0.10)",
+          ? "inset 0 1px 0 rgba(255,255,255,0.04), 0 4px 10px rgba(0,0,0,0.10)"
+          : "inset 0 1px 0 rgba(255,255,255,0.35), 0 4px 10px rgba(0,0,0,0.10)",
       }}
     >
       <div

@@ -14,7 +14,7 @@ import { supabase } from "@/lib/supabase"
 const MEMO_KEY = "landing_memo"
 const MEMO_SIZE = 350
 const CALENDAR_BOX_W = 380
-const CALENDAR_BOX_H = 450
+const CALENDAR_BOX_H = 460
 
 const THEME_KEY = "landing_theme"
 const THEME_MODE_KEY = "landing_theme_mode"
@@ -45,14 +45,14 @@ const THEMES = [
   {
     id: "stone",
     swatch: "#363636",
-    text: "text-stone-900",
+    text: "text-stone-800",
     subtext: "text-stone-400",
-    accent: "bg-stone-900/50",
-    calendarToday: "[&>button]:bg-stone-200/60",
-    calendarSelected: "[&>button]:bg-stone-900 [&>button]:text-white [&>button]:hover:bg-stone-900",
-    calendarSelectedButton: "aria-selected:bg-stone-900 aria-selected:text-white aria-selected:hover:bg-stone-900 !transition-none",
-    calendarCaption: "text-stone-900",
-    calendarWeekday: "text-stone-400",
+    accent: "bg-stone-700/50",
+    // calendarToday: "[&>button]:bg-stone-200/60",
+    // calendarSelected: "[&>button]:bg-stone-900 [&>button]:text-white [&>button]:hover:bg-stone-900",
+    // calendarSelectedButton: "aria-selected:bg-stone-900 aria-selected:text-white aria-selected:hover:bg-stone-900 !transition-none",
+    // calendarCaption: "text-stone-900",
+    // calendarWeekday: "text-stone-400",
     castingTitle: "text-stone-700",
     castingSubtitle: "text-stone-400",
     gnbText: "text-stone-900",
@@ -66,11 +66,11 @@ const THEMES = [
     text: "text-white",
     subtext: "text-white/70",
     accent: "bg-white/50",
-    calendarToday: "[&>button]:bg-white/20",
-    calendarSelected: "[&>button]:bg-white [&>button]:text-stone-900 [&>button]:hover:bg-white",
-    calendarSelectedButton: "aria-selected:bg-white aria-selected:text-stone-900 aria-selected:hover:bg-white !transition-none",
-    calendarCaption: "text-white",
-    calendarWeekday: "text-white/60",
+    // calendarToday: "[&>button]:bg-white/20",
+    // calendarSelected: "[&>button]:bg-white [&>button]:text-stone-900 [&>button]:hover:bg-white",
+    // calendarSelectedButton: "aria-selected:bg-white aria-selected:text-stone-900 aria-selected:hover:bg-white !transition-none",
+    // calendarCaption: "text-white",
+    // calendarWeekday: "text-white/60",
     castingTitle: "text-white",
     castingSubtitle: "text-white/70",
     gnbText: "text-white",
@@ -80,14 +80,14 @@ const THEMES = [
   {
     id: "blue",
     swatch: "#1885f1",
-    text: "text-blue-800",
+    text: "text-blue-900",
     subtext: "text-stone-400",
-    accent: "bg-blue-400/50",
-    calendarToday: "[&>button]:bg-blue-200/60",
-    calendarSelected: "[&>button]:bg-blue-700 [&>button]:text-white [&>button]:hover:bg-blue-700",
-    calendarSelectedButton: "aria-selected:bg-blue-700 aria-selected:text-white aria-selected:hover:bg-blue-700 !transition-none",
-    calendarCaption: "text-blue-900",
-    calendarWeekday: "text-blue-400",
+    accent: "bg-blue-800/50",
+    // calendarToday: "[&>button]:bg-blue-200/60",
+    // calendarSelected: "[&>button]:bg-blue-700 [&>button]:text-white [&>button]:hover:bg-blue-700",
+    // calendarSelectedButton: "aria-selected:bg-blue-700 aria-selected:text-white aria-selected:hover:bg-blue-700 !transition-none",
+    // calendarCaption: "text-blue-900",
+    // calendarWeekday: "text-blue-400",
     castingTitle: "text-blue-900",
     castingSubtitle: "text-blue-500",
     gnbText: "text-blue-900",
@@ -97,14 +97,14 @@ const THEMES = [
   {
     id: "green",
     swatch: "#3b6d10",
-    text: "text-green-800",
+    text: "text-green-900",
     subtext: "text-stone-400",
-    accent: "bg-green-400/50",
-    calendarToday: "[&>button]:bg-green-200/60",
-    calendarSelected: "[&>button]:bg-green-700 [&>button]:text-white [&>button]:hover:bg-green-700",
-    calendarSelectedButton: "aria-selected:bg-green-700 aria-selected:text-white aria-selected:hover:bg-green-700 !transition-none",
-    calendarCaption: "text-green-900",
-    calendarWeekday: "text-green-400",
+    accent: "bg-green-800/50",
+    // calendarToday: "[&>button]:bg-green-200/60",
+    // calendarSelected: "[&>button]:bg-green-700 [&>button]:text-white [&>button]:hover:bg-green-700",
+    // calendarSelectedButton: "aria-selected:bg-green-700 aria-selected:text-white aria-selected:hover:bg-green-700 !transition-none",
+    // calendarCaption: "text-green-900",
+    // calendarWeekday: "text-green-400",
     castingTitle: "text-green-900",
     castingSubtitle: "text-green-500",
     gnbText: "text-green-900",
@@ -114,14 +114,14 @@ const THEMES = [
   {
     id: "pink",
     swatch: "#ee6891",
-    text: "text-pink-800",
+    text: "text-pink-700",
     subtext: "text-stone-400",
-    accent: "bg-pink-300/50",
-    calendarToday: "[&>button]:bg-pink-200/60",
-    calendarSelected: "[&>button]:bg-pink-700 [&>button]:text-white [&>button]:hover:bg-pink-700",
-    calendarSelectedButton: "aria-selected:bg-pink-700 aria-selected:text-white aria-selected:hover:bg-pink-700 !transition-none",
-    calendarCaption: "text-pink-900",
-    calendarWeekday: "text-pink-400",
+    accent: "bg-pink-700/50",
+    // calendarToday: "[&>button]:bg-pink-200/60",
+    // calendarSelected: "[&>button]:bg-pink-700 [&>button]:text-white [&>button]:hover:bg-pink-700",
+    // calendarSelectedButton: "aria-selected:bg-pink-700 aria-selected:text-white aria-selected:hover:bg-pink-700 !transition-none",
+    // calendarCaption: "text-pink-900",
+    // calendarWeekday: "text-pink-400",
     castingTitle: "text-pink-900",
     castingSubtitle: "text-pink-500",
     gnbText: "text-pink-900",
@@ -131,14 +131,14 @@ const THEMES = [
   {
     id: "amber",
     swatch: "#ff8e00",
-    text: "text-amber-800",
+    text: "text-amber-600",
     subtext: "text-stone-400",
-    accent: "bg-amber-400/50",
-    calendarToday: "[&>button]:bg-amber-200/60",
-    calendarSelected: "[&>button]:bg-amber-700 [&>button]:text-white [&>button]:hover:bg-amber-700",
-    calendarSelectedButton: "aria-selected:bg-amber-700 aria-selected:text-white aria-selected:hover:bg-amber-700 !transition-none",
-    calendarCaption: "text-amber-900",
-    calendarWeekday: "text-amber-400",
+    accent: "bg-amber-500/50",
+    // calendarToday: "[&>button]:bg-amber-200/60",
+    // calendarSelected: "[&>button]:bg-amber-700 [&>button]:text-white [&>button]:hover:bg-amber-700",
+    // calendarSelectedButton: "aria-selected:bg-amber-700 aria-selected:text-white aria-selected:hover:bg-amber-700 !transition-none",
+    // calendarCaption: "text-amber-900",
+    // calendarWeekday: "text-amber-400",
     castingTitle: "text-amber-900",
     castingSubtitle: "text-amber-500",
     gnbText: "text-amber-900",
@@ -540,6 +540,9 @@ export default function Landing() {
               backgroundImage: isDark
                 ? `linear-gradient(to right bottom, rgba(0,0,0,0.6), rgba(0,0,0,0.3)), url('${mainImage}')`
                 : `linear-gradient(to right bottom, rgba(255,255,255,0.4), rgba(255,255,255,0.3)), url('${mainImage}')`,
+              boxShadow: isDark
+                ? "inset 0 1px 0 rgb(0 0 0 / 35%), 0px 10px 30px rgb(0 0 0 / 10%)"
+                : "inset 0 1px 0 rgba(255,255,255,0.35), 0 10px 30px rgba(0,0,0,0.10)",
             }}
           >
             <div
@@ -574,7 +577,7 @@ export default function Landing() {
               />
 
               <aside className="w-full lg:w-[400px] lg:shrink-0">
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-1">
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-1 h-full">
                   <ImageSection
                     castingItems={castingItems}
                     mainImage={mainImage}
@@ -648,6 +651,8 @@ export default function Landing() {
               memo={memo}
               onSave={handleMemoSave}
               onClose={() => setMemoOpen(false)}
+              theme={theme}
+              isDark={isDark}
             />
           )}
         </>

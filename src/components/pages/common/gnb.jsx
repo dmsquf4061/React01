@@ -135,7 +135,7 @@ export default function Gnb({ theme, isDark = false, onToggleLightDark }) {
   return (
     <aside
       className="
-        sticky top-0 z-50 flex h-[70px] w-full items-center gap-2 lg:gap-4
+        sticky top-0 z-50 flex h-[50px] w-full items-center gap-2 lg:gap-4
         lg:static lg:h-full lg:w-[70px] lg:flex-col xl:w-[90px]
       "
     >
@@ -153,7 +153,7 @@ export default function Gnb({ theme, isDark = false, onToggleLightDark }) {
       </div>
 
       <div
-        className="flex min-w-0 flex-1 flex-row items-center justify-between rounded-[999px] p-2 shadow-sm lg:w-full lg:flex-col lg:rounded-[80px]"
+        className="flex min-w-0 flex-1 p-1 flex-row items-center justify-between rounded-[999px] lg:p-2 shadow-sm lg:w-full lg:flex-col lg:rounded-[80px]"
         style={{
           background: isDark ? "rgba(10,10,10,0.6)" : "rgba(255,255,255,0.22)",
           backdropFilter: "blur(32px) saturate(160%)",
@@ -179,7 +179,7 @@ export default function Gnb({ theme, isDark = false, onToggleLightDark }) {
             <ToggleButton isDark={isDark} onToggle={onToggleLightDark} />
           </div>
 
-          <div className="h-[54px] w-[54px] flex-shrink-0 overflow-hidden rounded-full border border-white/25 shadow-[0_10px_30px_rgba(0,0,0,0.12)] lg:h-auto lg:w-full lg:aspect-square">
+          <div className="h-[45px] lg:h-[54px] w-[45px] lg:w-[54px] flex-shrink-0 overflow-hidden rounded-full border border-white/25 shadow-[0_10px_30px_rgba(0,0,0,0.12)] lg:h-auto lg:w-full lg:aspect-square">
             <img src="./img/img8.jpg" alt="profile" className="h-full w-full object-cover object-center" />
           </div>
         </div>

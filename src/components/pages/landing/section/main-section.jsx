@@ -3,7 +3,7 @@ import MemoSection from "./memo-section"
 import ClockSection from "./clock-section"
 
 const CALENDAR_BOX_W = 380
-const CALENDAR_BOX_H = 450
+const CALENDAR_BOX_H = 460
 
 export default function MainSection({
   mainImage,
@@ -21,7 +21,7 @@ export default function MainSection({
     <main className="min-w-0 flex-1">
       <section
         className="
-          flex h-full w-full min-h-[420px] flex-col gap-4 overflow-hidden
+          flex h-full w-full min-h-[420px] flex-col gap-4 overflow-visible
           rounded-[10px]
           lg:relative lg:min-h-[820px] lg:rounded-[20px]
           xl:rounded-[40px]
@@ -37,6 +37,7 @@ export default function MainSection({
           style={{
             clipPath: isLg ? clip : undefined,
             WebkitClipPath: isLg ? clip : undefined,
+            height: isLg ? "100%" : "500px",
           }}
         >
           <ClockSection isDark={isDark} />
