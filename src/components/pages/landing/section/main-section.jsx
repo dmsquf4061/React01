@@ -21,9 +21,9 @@ export default function MainSection({
     <main className="min-w-0 flex-1">
       <section
         className="
-          flex h-full w-full min-h-[420px] flex-col gap-4 overflow-visible
+          flex h-full w-full lg:min-h-[780px] flex-col gap-4 overflow-visible
           rounded-[10px]
-          lg:relative lg:min-h-[820px] lg:rounded-[20px]
+          lg:relative lg:rounded-[20px]
           xl:rounded-[40px]
         "
       >

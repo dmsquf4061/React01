@@ -546,7 +546,7 @@ export default function Landing() {
             }}
           >
             <div
-              className="flex h-full w-full flex-col gap-4 overflow-y-auto p-4 lg:min-h-[820px] lg:flex-row lg:gap-4 lg:rounded-[0px] lg:p-4 xl:rounded-[60px]"
+              className="flex h-full lg:min-h-[868px] lg:min-w-[1290px] w-full flex-col gap-4 overflow-y-auto lg:overflow-hidden p-4 lg:flex-row lg:gap-4 lg:rounded-[0px] lg:p-4 xl:rounded-[60px]"
               style={{
                 background: isDark ? "rgba(10,10,10,0.6)" : "rgba(255,255,255,0.14)",
                 backdropFilter: "blur(32px) saturate(160%)",
@@ -576,7 +576,7 @@ export default function Landing() {
                 onDateChange={(d) => { if (d) setDate(d) }}
               />
 
-              <aside className="w-full lg:w-[400px] lg:shrink-0">
+              <aside className="w-full lg:w-[400px] lg:min-h-[820px] lg:shrink-0 lg:overflow-y-auto no-scrollbar">
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-1 h-full">
                   <ImageSection
                     castingItems={castingItems}

@@ -136,7 +136,7 @@ export default function Gnb({ theme, isDark = false, onToggleLightDark }) {
     <aside
       className="
         sticky top-0 z-50 flex h-[50px] w-full items-center gap-2 lg:gap-4
-        lg:static lg:h-full lg:w-[70px] lg:flex-col xl:w-[90px]
+        lg:static lg:h-full lg:min-h-[820px] lg:w-[70px] lg:flex-col xl:w-[90px]
       "
     >
       <div

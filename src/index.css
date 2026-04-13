@@ -312,3 +312,13 @@ code {
 .lucide-chevron-left, .lucide-chevron-right {
   color: rgb(120 113 108) !important;
 }
+
+/* 스크롤바 숨기기 */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE, Edge */
+  scrollbar-width: none;     /* Firefox */
+}
