@@ -1,5 +1,5 @@
-import { memo } from "react"
-import { SkipBack, SkipForward, Play, Pause, Volume2 } from "lucide-react"
+import { memo, useEffect, useState } from "react"
+import { SkipBack, SkipForward, Play, Pause, Volume2, VolumeX } from "lucide-react"
 
 // 초 단위 시간을 mm:ss 형식으로 변환
 function formatTime(time) {
@@ -29,7 +29,6 @@ const PlayerRoundButton = memo(function PlayerRoundButton({
         isDark ? "text-white" : "text-stone-600",
       ].join(" ")}
       style={{
-        // 다크/라이트 버튼 배경
         background: isDark
           ? "rgba(255,255,255,0.10)"
           : "rgba(255,255,255,0.22)",
@@ -42,7 +41,6 @@ const PlayerRoundButton = memo(function PlayerRoundButton({
         WebkitTapHighlightColor: "transparent",
       }}
     >
-      {/* hover 오버레이 */}
       <span
         aria-hidden="true"
         className={[
@@ -51,7 +49,6 @@ const PlayerRoundButton = memo(function PlayerRoundButton({
           isDark ? "bg-white/10 group-hover:opacity-100" : "bg-white/35 group-hover:opacity-100",
         ].join(" ")}
       />
-      {/* 아이콘 영역 */}
       <span className="relative z-10 flex items-center justify-center [transform:translateZ(0)]">
         {children}
       </span>
@@ -88,6 +85,22 @@ export default function MusicSection({
   // 볼륨 퍼센트
   const volumePercent = Math.max(0, Math.min(100, volume * 100))
 
+  // 모바일 여부
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.matchMedia("(pointer: coarse)").matches)
+    }
+
+    checkMobile()
+    window.addEventListener("resize", checkMobile)
+
+    return () => {
+      window.removeEventListener("resize", checkMobile)
+    }
+  }, [])
+
   // 재생 위치 변경
   const handleSeekChange = (e) => {
     onSeek?.(e)
@@ -99,22 +112,38 @@ export default function MusicSection({
 
     if (audioRef?.current) {
       try {
-        // 오디오 요소 볼륨 직접 반영
         audioRef.current.volume = nextVolume
         audioRef.current.muted = nextVolume <= 0
       } catch {
-        // 일부 모바일 브라우저는 volume 제어 제한 가능
+        // 일부 모바일 브라우저는 volume 제어 제한
       }
     }
 
     onVolumeChange?.(e)
   }
 
+  // 음소거 / 해제
+  const handleMuteToggle = () => {
+    const nextVolume = volume > 0 ? 0 : 1
+
+    if (audioRef?.current) {
+      try {
+        audioRef.current.volume = nextVolume
+        audioRef.current.muted = nextVolume <= 0
+      } catch {
+        // 일부 모바일 브라우저는 volume 제어 제한
+      }
+    }
+
+    onVolumeChange?.({
+      target: { value: String(nextVolume) },
+    })
+  }
+
   return (
     <section
       className={`flex h-full flex-col justify-between gap-4 rounded-[8px] p-4 md:self-start lg:rounded-[16px] lg:p-6 xl:rounded-[32px] ${panelBg}`}
       style={{
-        // 전체 패널 배경
         background: isDark
           ? "linear-gradient(180deg, rgba(0,0,0,0.30) 0%, rgba(0,0,0,0.10) 100%)"
           : "linear-gradient(180deg, rgba(255,255,255,0.30) 0%, rgba(255,255,255,0.10) 100%)",
@@ -139,7 +168,6 @@ export default function MusicSection({
           </p>
         </div>
 
-        {/* 현재 곡 번호 / 전체 곡 수 */}
         <p className={`shrink-0 text-[12px] font-medium leading-none ${theme.subtext}`}>
           {currentTrackIndex + 1}/{totalTracks}
         </p>
@@ -166,7 +194,6 @@ export default function MusicSection({
             onInput={handleSeekChange}
             className="music-range h-2 w-full cursor-pointer appearance-none rounded-full"
             style={{
-              // 진행률에 따라 배경 채움
               background: `linear-gradient(to right, ${theme.swatch} 0%, ${theme.swatch} ${progressPercent}%, #fff ${progressPercent}%, #fff 100%)`,
               ["--range-thumb-color"]: theme.swatch,
               WebkitTapHighlightColor: "transparent",
@@ -203,26 +230,39 @@ export default function MusicSection({
 
           {/* 볼륨 컨트롤 */}
           <div className="flex min-w-0 items-center justify-end gap-2">
-            <Volume2 className={`h-4 w-4 shrink-0 ${isDark ? "text-white/70" : theme.subtext}`} />
+            <PlayerRoundButton
+              onClick={handleMuteToggle}
+              ariaLabel={volume > 0 ? "mute" : "unmute"}
+              isDark={isDark}
+            >
+              {volume > 0 ? (
+                <Volume2 size={16} strokeWidth={2} />
+              ) : (
+                <VolumeX size={16} strokeWidth={2} />
+              )}
+            </PlayerRoundButton>
 
-            <input
-              type="range"
-              min="0"
-              max="1"
-              step="0.01"
-              value={volume}
-              onChange={handleVolumeInput}
-              onInput={handleVolumeInput}
-              className="music-range h-2 w-20 cursor-pointer appearance-none rounded-full sm:w-24 md:w-28"
-              style={{
-                // 볼륨 값에 따라 배경 채움
-                background: `linear-gradient(to right, ${theme.swatch} 0%, ${theme.swatch} ${volumePercent}%, #fff ${volumePercent}%, #fff 100%)`,
-                ["--range-thumb-color"]: theme.swatch,
-                WebkitTapHighlightColor: "transparent",
-                touchAction: "pan-x",
-              }}
-              aria-label="volume"
-            />
+            {!isMobile ? (
+              <input
+                type="range"
+                min="0"
+                max="1"
+                step="0.01"
+                value={volume}
+                onChange={handleVolumeInput}
+                onInput={handleVolumeInput}
+                className="music-range h-2 w-20 cursor-pointer appearance-none rounded-full sm:w-24 md:w-28"
+                style={{
+                  background: `linear-gradient(to right, ${theme.swatch} 0%, ${theme.swatch} ${volumePercent}%, #fff ${volumePercent}%, #fff 100%)`,
+                  ["--range-thumb-color"]: theme.swatch,
+                  WebkitTapHighlightColor: "transparent",
+                  touchAction: "pan-x",
+                }}
+                aria-label="volume"
+              />
+            ) : (
+              <p className={`text-xs ${theme.subtext}`}>기기 음량 사용</p>
+            )}
           </div>
         </div>
       </div>
