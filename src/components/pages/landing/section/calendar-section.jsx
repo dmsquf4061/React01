@@ -2,12 +2,15 @@ import { useEffect, useMemo, useState } from "react"
 import { Calendar } from "@/components/ui/calendar"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 
+// 공통 transition easing 값
 const EASE = "cubic-bezier(0.22, 1, 0.36, 1)"
 
+// 전달받은 날짜의 해당 월 1일 반환
 function startOfMonth(date) {
   return new Date(date.getFullYear(), date.getMonth(), 1)
 }
 
+// 두 날짜가 같은 연/월인지 확인
 function isSameMonth(a, b) {
   return (
     a.getFullYear() === b.getFullYear() &&
@@ -15,18 +18,23 @@ function isSameMonth(a, b) {
   )
 }
 
+// 캘린더 섹션 컴포넌트
 export default function CalendarSection({ date, onDateChange, theme, isDark }) {
+  // 오늘 날짜와 오늘이 속한 월
   const today = useMemo(() => new Date(), [])
   const todayMonth = useMemo(() => startOfMonth(today), [today])
 
+  // 현재 캘린더에 보여줄 월 상태
   const [currentMonth, setCurrentMonth] = useState(startOfMonth(date || today))
 
+  // 선택 날짜가 바뀌면 표시 월도 같이 맞춤
   useEffect(() => {
     if (date) {
       setCurrentMonth(startOfMonth(date))
     }
   }, [date])
 
+  // theme 값이 없을 때를 대비한 기본 테마값
   const safeTheme = useMemo(
     () => ({
       text: theme?.text ?? (isDark ? "text-white" : "text-stone-900"),
@@ -48,19 +56,23 @@ export default function CalendarSection({ date, onDateChange, theme, isDark }) {
     [theme, isDark]
   )
 
+  // 현재 보고 있는 월이 이번 달인지 체크
   const isCurrentMonthView = isSameMonth(currentMonth, todayMonth)
 
+  // 상단에 표시할 연/월 텍스트
   const monthLabel = currentMonth.toLocaleDateString("ko-KR", {
     year: "numeric",
     month: "long",
   })
 
+  // 이전 달로 이동
   const handlePrevMonth = () => {
     setCurrentMonth(
       new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1, 1)
     )
   }
 
+  // 다음 달로 이동
   const handleNextMonth = () => {
     if (isCurrentMonthView) return
 
@@ -70,6 +82,7 @@ export default function CalendarSection({ date, onDateChange, theme, isDark }) {
       1
     )
 
+    // 오늘 월보다 뒤로는 이동하지 않음
     if (nextMonth > todayMonth) {
       setCurrentMonth(todayMonth)
       return
@@ -78,6 +91,7 @@ export default function CalendarSection({ date, onDateChange, theme, isDark }) {
     setCurrentMonth(nextMonth)
   }
 
+  // 오늘 날짜로 이동
   const handleGoToday = () => {
     const now = new Date()
     setCurrentMonth(startOfMonth(now))
@@ -93,6 +107,7 @@ export default function CalendarSection({ date, onDateChange, theme, isDark }) {
         ease-[cubic-bezier(0.22,1,0.36,1)]
       "
       style={{
+        // 다크/라이트 배경 스타일
         background: isDark
           ? "linear-gradient(180deg, rgba(0,0,0,0.30) 0%, rgba(0,0,0,0.10) 100%)"
           : "linear-gradient(180deg, rgba(255,255,255,0.30) 0%, rgba(255,255,255,0.10) 100%)",
@@ -107,8 +122,10 @@ export default function CalendarSection({ date, onDateChange, theme, isDark }) {
         transition: `background 500ms ${EASE}, border-color 500ms ${EASE}, box-shadow 500ms ${EASE}, color 320ms ${EASE}`,
       }}
     >
+      {/* 상단 헤더 */}
       <div className="mb-3 flex items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-3">
+          {/* 현재 월 라벨 */}
           <p
             className={`
               shrink-0 text-base font-semibold lg:text-lg
@@ -119,6 +136,7 @@ export default function CalendarSection({ date, onDateChange, theme, isDark }) {
             {monthLabel}
           </p>
 
+          {/* 현재 월이 아닐 때만 오늘 버튼 노출 */}
           {!isCurrentMonthView && (
             <button
               type="button"
@@ -148,6 +166,7 @@ export default function CalendarSection({ date, onDateChange, theme, isDark }) {
           )}
         </div>
 
+        {/* 월 이동 버튼 */}
         <div className="flex shrink-0 items-center gap-2">
           <button
             type="button"
@@ -172,6 +191,7 @@ export default function CalendarSection({ date, onDateChange, theme, isDark }) {
               hover:before:opacity-100
             `}
           >
+            {/* 이전 달 아이콘 */}
             <ChevronLeft
               className={`
                 relative z-10 h-5 w-5
@@ -207,6 +227,7 @@ export default function CalendarSection({ date, onDateChange, theme, isDark }) {
               hover:before:opacity-100
             `}
           >
+            {/* 다음 달 아이콘 */}
             <ChevronRight
               className={`
                 relative z-10 h-5 w-5
@@ -219,6 +240,7 @@ export default function CalendarSection({ date, onDateChange, theme, isDark }) {
         </div>
       </div>
 
+      {/* 캘린더 본문 */}
       <Calendar
         mode="single"
         month={currentMonth}
@@ -236,6 +258,7 @@ export default function CalendarSection({ date, onDateChange, theme, isDark }) {
           ${isDark ? "dark-calendar" : ""}
         `}
         components={{
+          // 기본 chevron 아이콘 교체
           Chevron: ({ orientation, className }) =>
             orientation === "left" ? (
               <ChevronLeft className={className} />

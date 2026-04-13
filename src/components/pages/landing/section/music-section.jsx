@@ -1,6 +1,7 @@
 import { memo } from "react"
 import { SkipBack, SkipForward, Play, Pause, Volume2 } from "lucide-react"
 
+// 초 단위 시간을 mm:ss 형식으로 변환
 function formatTime(time) {
   if (!Number.isFinite(time)) return "0:00"
   const minutes = Math.floor(time / 60)
@@ -8,6 +9,7 @@ function formatTime(time) {
   return `${minutes}:${String(seconds).padStart(2, "0")}`
 }
 
+// 공통 원형 플레이어 버튼
 const PlayerRoundButton = memo(function PlayerRoundButton({
   onClick,
   ariaLabel,
@@ -27,6 +29,7 @@ const PlayerRoundButton = memo(function PlayerRoundButton({
         isDark ? "text-white" : "text-stone-600",
       ].join(" ")}
       style={{
+        // 다크/라이트 버튼 배경
         background: isDark
           ? "rgba(255,255,255,0.10)"
           : "rgba(255,255,255,0.22)",
@@ -39,6 +42,7 @@ const PlayerRoundButton = memo(function PlayerRoundButton({
         WebkitTapHighlightColor: "transparent",
       }}
     >
+      {/* hover 오버레이 */}
       <span
         aria-hidden="true"
         className={[
@@ -47,6 +51,7 @@ const PlayerRoundButton = memo(function PlayerRoundButton({
           isDark ? "bg-white/10 group-hover:opacity-100" : "bg-white/35 group-hover:opacity-100",
         ].join(" ")}
       />
+      {/* 아이콘 영역 */}
       <span className="relative z-10 flex items-center justify-center [transform:translateZ(0)]">
         {children}
       </span>
@@ -54,6 +59,7 @@ const PlayerRoundButton = memo(function PlayerRoundButton({
   )
 })
 
+// 음악 플레이어 섹션
 export default function MusicSection({
   currentTrack,
   currentTrackIndex,
@@ -77,22 +83,27 @@ export default function MusicSection({
   onTrackEnd,
   isDark,
 }) {
+  // 재생 진행률
   const progressPercent = duration ? (currentTime / duration) * 100 : 0
+  // 볼륨 퍼센트
   const volumePercent = Math.max(0, Math.min(100, volume * 100))
 
+  // 재생 위치 변경
   const handleSeekChange = (e) => {
     onSeek?.(e)
   }
 
+  // 볼륨 변경
   const handleVolumeInput = (e) => {
     const nextVolume = Number(e.target.value)
 
     if (audioRef?.current) {
       try {
+        // 오디오 요소 볼륨 직접 반영
         audioRef.current.volume = nextVolume
         audioRef.current.muted = nextVolume <= 0
       } catch {
-        // iOS Safari 등 일부 모바일 환경에서는 volume 제어가 제한될 수 있음
+        // 일부 모바일 브라우저는 volume 제어 제한 가능
       }
     }
 
@@ -103,6 +114,7 @@ export default function MusicSection({
     <section
       className={`flex h-full flex-col justify-between gap-4 rounded-[8px] p-4 md:self-start lg:rounded-[16px] lg:p-6 xl:rounded-[32px] ${panelBg}`}
       style={{
+        // 전체 패널 배경
         background: isDark
           ? "linear-gradient(180deg, rgba(0,0,0,0.30) 0%, rgba(0,0,0,0.10) 100%)"
           : "linear-gradient(180deg, rgba(255,255,255,0.30) 0%, rgba(255,255,255,0.10) 100%)",
@@ -116,6 +128,7 @@ export default function MusicSection({
           : "inset 0 1px 0 rgba(255,255,255,0.35), 0 4px 10px rgba(0,0,0,0.10)",
       }}
     >
+      {/* 상단: 곡 정보 */}
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0 text-left">
           <p className={`truncate text-xl lg:mb-1 ${theme.text}`}>
@@ -126,18 +139,22 @@ export default function MusicSection({
           </p>
         </div>
 
+        {/* 현재 곡 번호 / 전체 곡 수 */}
         <p className={`shrink-0 text-[12px] font-medium leading-none ${theme.subtext}`}>
           {currentTrackIndex + 1}/{totalTracks}
         </p>
       </div>
 
+      {/* 중간: 시간, 진행바, 컨트롤 */}
       <div className="flex flex-col items-start gap-3">
+        {/* 현재 시간 / 전체 시간 */}
         <div className="flex w-full justify-end">
           <p className={`shrink-0 text-sm ${theme.subtext}`}>
             {formatTime(currentTime)} / {formatTime(duration)}
           </p>
         </div>
 
+        {/* 재생 진행 바 */}
         <div className="w-full">
           <input
             type="range"
@@ -149,6 +166,7 @@ export default function MusicSection({
             onInput={handleSeekChange}
             className="music-range h-2 w-full cursor-pointer appearance-none rounded-full"
             style={{
+              // 진행률에 따라 배경 채움
               background: `linear-gradient(to right, ${theme.swatch} 0%, ${theme.swatch} ${progressPercent}%, #fff ${progressPercent}%, #fff 100%)`,
               ["--range-thumb-color"]: theme.swatch,
               WebkitTapHighlightColor: "transparent",
@@ -158,7 +176,9 @@ export default function MusicSection({
           />
         </div>
 
+        {/* 하단 컨트롤 */}
         <div className="flex w-full items-center justify-between gap-3">
+          {/* 이전 / 재생 / 다음 버튼 */}
           <div className="flex items-center gap-2">
             <PlayerRoundButton onClick={onPrev} ariaLabel="previous track" isDark={isDark}>
               <SkipBack size={18} strokeWidth={2} />
@@ -181,6 +201,7 @@ export default function MusicSection({
             </PlayerRoundButton>
           </div>
 
+          {/* 볼륨 컨트롤 */}
           <div className="flex min-w-0 items-center justify-end gap-2">
             <Volume2 className={`h-4 w-4 shrink-0 ${isDark ? "text-white/70" : theme.subtext}`} />
 
@@ -194,6 +215,7 @@ export default function MusicSection({
               onInput={handleVolumeInput}
               className="music-range h-2 w-20 cursor-pointer appearance-none rounded-full sm:w-24 md:w-28"
               style={{
+                // 볼륨 값에 따라 배경 채움
                 background: `linear-gradient(to right, ${theme.swatch} 0%, ${theme.swatch} ${volumePercent}%, #fff ${volumePercent}%, #fff 100%)`,
                 ["--range-thumb-color"]: theme.swatch,
                 WebkitTapHighlightColor: "transparent",
@@ -205,6 +227,7 @@ export default function MusicSection({
         </div>
       </div>
 
+      {/* 실제 오디오 요소 */}
       <audio
         ref={audioRef}
         preload="auto"

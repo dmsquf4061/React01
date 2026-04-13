@@ -8,15 +8,42 @@ import {
 } from "@/components/ui/carousel"
 import Autoplay from "embla-carousel-autoplay"
 
+// 책 데이터 목록
 const BOOKS = [
-  { id: 1, src: "./img/img1.jpg", title: "Book 1" },
-  { id: 2, src: "./img/img2.jpg", title: "Book 2" },
-  { id: 3, src: "./img/img3.jpg", title: "Book 3" },
-  { id: 4, src: "./img/img4.jpg", title: "Book 4" },
-  { id: 5, src: "./img/img5.jpg", title: "Book 5" },
+  {
+    id: 1,
+    src: "./img/img1.jpg",
+    title: "Book 1",
+    description: "첫 번째 이미지에 대한 간단한 설명입니다.",
+  },
+  {
+    id: 2,
+    src: "./img/img2.jpg",
+    title: "Book 2",
+    description: "두 번째 이미지에 대한 간단한 설명입니다.",
+  },
+  {
+    id: 3,
+    src: "./img/img3.jpg",
+    title: "Book 3",
+    description: "세 번째 이미지에 대한 간단한 설명입니다.",
+  },
+  {
+    id: 4,
+    src: "./img/img4.jpg",
+    title: "Book 4",
+    description: "네 번째 이미지에 대한 간단한 설명입니다.",
+  },
+  {
+    id: 5,
+    src: "./img/img5.jpg",
+    title: "Book 5",
+    description: "다섯 번째 이미지에 대한 간단한 설명입니다.",
+  },
 ]
 
-export default function BookSection({ theme, panelBg, isDark }) {
+export default function BookSection({ theme, panelBg, isDark, onBookOpen }) {
+  // 자동 슬라이드 설정
   const autoplay = useRef(
     Autoplay({
       delay: 3000,
@@ -24,6 +51,7 @@ export default function BookSection({ theme, panelBg, isDark }) {
     })
   )
 
+  // 카드(패널) 스타일
   const panelStyle = {
     background: isDark
       ? "linear-gradient(180deg, rgba(0,0,0,0.30) 0%, rgba(0,0,0,0.10) 100%)"
@@ -38,6 +66,7 @@ export default function BookSection({ theme, panelBg, isDark }) {
       : "inset 0 1px 0 rgba(255,255,255,0.35), 0 4px 10px rgba(0,0,0,0.10)",
   }
 
+  // 네비게이션 버튼 스타일
   const navStyle = {
     background: isDark
       ? "linear-gradient(180deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.08) 100%)"
@@ -51,26 +80,27 @@ export default function BookSection({ theme, panelBg, isDark }) {
     WebkitTapHighlightColor: "transparent",
   }
 
-    const navClass = [
-        "!static",
-        "!left-auto",
-        "!right-auto",
-        "!top-auto",
-        "!translate-y-0",
-        "inline-flex h-8 w-8 items-center justify-center rounded-full",
-        "cursor-pointer overflow-hidden select-none relative shrink-0",
-        "[transform:translateZ(0)] [backface-visibility:hidden]",
-        "[isolation:isolate] [contain:paint]",
-        "!transition-none !duration-0 !scale-100 hover:!scale-100",
-        "!bg-transparent hover:!bg-transparent focus:!bg-transparent active:!bg-transparent",
-        "shadow-none",
-        "[&_svg]:[transform:translateZ(0)] [&_svg]:[backface-visibility:hidden]",
-        "before:pointer-events-none before:absolute before:inset-0 before:rounded-full",
-        "before:opacity-0 before:transition-opacity before:duration-150",
-        isDark
-            ? "before:bg-white/10 hover:before:opacity-100 !text-white hover:!text-white"
-            : "before:bg-white/35 hover:before:opacity-100 !text-stone-600",
-    ].join(" ")
+  // 네비게이션 버튼 클래스
+  const navClass = [
+    "!static",
+    "!left-auto",
+    "!right-auto",
+    "!top-auto",
+    "!translate-y-0",
+    "inline-flex h-8 w-8 items-center justify-center rounded-full",
+    "cursor-pointer overflow-hidden select-none relative shrink-0",
+    "[transform:translateZ(0)] [backface-visibility:hidden]",
+    "[isolation:isolate] [contain:paint]",
+    "!transition-none !duration-0 !scale-100 hover:!scale-100",
+    "!bg-transparent hover:!bg-transparent focus:!bg-transparent active:!bg-transparent",
+    "shadow-none",
+    "[&_svg]:[transform:translateZ(0)] [&_svg]:[backface-visibility:hidden]",
+    "before:pointer-events-none before:absolute before:inset-0 before:rounded-full",
+    "before:opacity-0 before:transition-opacity before:duration-150",
+    isDark
+      ? "before:bg-white/10 hover:before:opacity-100 !text-white hover:!text-white"
+      : "before:bg-white/35 hover:before:opacity-100 !text-stone-600",
+  ].join(" ")
 
   return (
     <section
@@ -80,9 +110,10 @@ export default function BookSection({ theme, panelBg, isDark }) {
       <Carousel
         opts={{ align: "center", loop: true }}
         plugins={[autoplay.current]}
-        className="w-full overflow-visible h-full flex flex-col justify-between"
+        className="flex h-full w-full flex-col justify-between overflow-visible"
       >
-        <div className="flex items-center justify-between px-4 lg:px-6 mb-4">
+        {/* 상단 헤더 */}
+        <div className="mb-4 flex items-center justify-between px-4 lg:px-6">
           <p className={`text-left text-xl ${theme.text}`}>BOOK</p>
 
           <div className="flex items-center gap-1">
@@ -91,25 +122,38 @@ export default function BookSection({ theme, panelBg, isDark }) {
           </div>
         </div>
 
-        <CarouselContent className="-ml-2 overflow-visible h-full">
+        {/* 캐러셀 콘텐츠 */}
+        <CarouselContent className="-ml-2 h-full overflow-visible">
           {BOOKS.map((book) => (
-            <CarouselItem key={book.id} className="basis-[50%] pl-2 max-w-[220px] min-w-[220px]">
-              <div
-                className="cursor-pointer flex items-end"
+            <CarouselItem
+              key={book.id}
+              className="basis-[50%] max-w-[220px] min-w-[220px] pl-2"
+            >
+              <button
+                type="button"
+                className="flex cursor-pointer items-end text-left"
                 style={{
                   position: "relative",
                   height: "280px",
                   overflow: "visible",
+                  width: "100%",
+                  background: "transparent",
                 }}
+                onClick={() => onBookOpen?.(book)}
                 onMouseEnter={(e) => {
                   const cover = e.currentTarget.querySelector(".book-cover")
-                  if (cover) cover.style.transform = "translateX(-50%) translateY(-20px)"
+                  if (cover) {
+                    cover.style.transform = "translateX(-50%) translateY(-20px)"
+                  }
                 }}
                 onMouseLeave={(e) => {
                   const cover = e.currentTarget.querySelector(".book-cover")
-                  if (cover) cover.style.transform = "translateX(-50%) translateY(0px)"
+                  if (cover) {
+                    cover.style.transform = "translateX(-50%) translateY(0px)"
+                  }
                 }}
               >
+                {/* 책 이미지 */}
                 <img
                   src={book.src}
                   alt={book.title}
@@ -130,6 +174,7 @@ export default function BookSection({ theme, panelBg, isDark }) {
                   }}
                 />
 
+                {/* 하단 유리 패널 */}
                 <div
                   style={{
                     position: "absolute",
@@ -149,7 +194,14 @@ export default function BookSection({ theme, panelBg, isDark }) {
                     zIndex: 2,
                   }}
                 />
-              </div>
+
+                {/* 카드 제목 */}
+                <div className="pointer-events-none absolute bottom-4 left-4 z-10">
+                  <p className={`text-sm font-medium ${theme.text}`}>
+                    {book.title}
+                  </p>
+                </div>
+              </button>
             </CarouselItem>
           ))}
         </CarouselContent>

@@ -1,61 +1,64 @@
 "use client"
 
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { PenLine, Image, Sun, Moon } from "lucide-react"
 
-function IconButton({ children, active = false, theme, isDark }) {
+// 공통 아이콘 버튼
+function IconButton({
+  children,
+  active = false,
+  theme,
+  isDark,
+  onClick,
+  ariaLabel,
+  role,
+  tabIndex,
+  ariaSelected,
+  onKeyDown,
+  id,
+  controls,
+}) {
   return (
     <Button
       type="button"
       variant="ghost"
       size="icon"
+      onClick={onClick}
+      aria-label={ariaLabel}
+      role={role}
+      tabIndex={tabIndex}
+      aria-selected={ariaSelected}
+      aria-controls={controls}
+      id={id}
+      onKeyDown={onKeyDown}
       className={[
         "group relative h-11 w-11 overflow-hidden rounded-full cursor-pointer select-none",
         "[transform:translateZ(0)] [backface-visibility:hidden]",
         "[isolation:isolate] [contain:paint]",
         "!transition-none !duration-0",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60",
         "!bg-transparent hover:!bg-transparent focus:!bg-transparent active:!bg-transparent",
         "shadow-none",
-        active
-          ? [theme.gnbActiveBg, theme.gnbActiveText].join(" ")
-          : [theme.gnbText].join(" "),
       ].join(" ")}
-      style={
-        active
-          ? {
-              WebkitTapHighlightColor: "transparent",
-            }
-          : {
-              background: isDark
-                ? "rgba(255,255,255,0.08)"
-                : "rgba(255,255,255,0.16)",
-              border: isDark
-                ? "1px solid rgba(255,255,255,0.10)"
-                : "1px solid rgba(255,255,255,0.20)",
-              boxShadow: isDark
-                ? "inset 0 1px 0 rgba(255,255,255,0.05), 0 4px 12px rgba(0,0,0,0.14)"
-                : "inset 0 1px 0 rgba(255,255,255,0.28), 0 4px 12px rgba(0,0,0,0.08)",
-              WebkitTapHighlightColor: "transparent",
-            }
-      }
+      style={{
+        WebkitTapHighlightColor: "transparent",
+      }}
     >
-      {!active && (
-        <span
-          aria-hidden="true"
-          className={[
-            "pointer-events-none absolute inset-0 rounded-full opacity-0 transition-opacity duration-150",
-            isDark ? "bg-white/10 group-hover:opacity-100" : "bg-white/25 group-hover:opacity-100",
-          ].join(" ")}
-        />
-      )}
-
-      <span className="relative z-10 flex items-center justify-center [transform:translateZ(0)]">
+      <span
+        className={`relative z-10 flex items-center justify-center [transform:translateZ(0)] transition-colors duration-150 ${
+          active
+            ? `${theme.text} opacity-60` 
+            : `${theme.text} ${theme.gnbHoverText} group-hover:opacity-40`
+        }`}
+      >
         {children}
       </span>
     </Button>
   )
 }
 
+// 라이트/다크 토글 버튼
 function ToggleButton({ isDark, onToggle }) {
   const mobileThumbTransform = isDark ? "translateX(32px)" : "translateX(0px)"
   const desktopThumbTransform = isDark ? "translateY(32px)" : "translateY(0px)"
@@ -69,6 +72,7 @@ function ToggleButton({ isDark, onToggle }) {
         "relative flex items-center justify-center rounded-full cursor-pointer overflow-hidden select-none",
         "[transform:translateZ(0)] [backface-visibility:hidden]",
         "[isolation:isolate] [contain:paint]",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/60",
       ].join(" ")}
       style={{
         background: "rgba(255,255,255,0.16)",
@@ -78,6 +82,7 @@ function ToggleButton({ isDark, onToggle }) {
         WebkitTapHighlightColor: "transparent",
       }}
     >
+      {/* 모바일 토글 */}
       <div className="relative h-10 w-[80px] overflow-hidden rounded-full border border-black/10 lg:hidden">
         <div className="absolute left-[14px] top-1/2 flex -translate-y-1/2 items-center justify-center">
           <Sun size={16} className="text-white [transform:translateZ(0)]" />
@@ -103,6 +108,7 @@ function ToggleButton({ isDark, onToggle }) {
         </div>
       </div>
 
+      {/* 데스크탑 토글 */}
       <div className="relative hidden h-[80px] w-10 overflow-hidden rounded-full border border-black/10 lg:block">
         <div className="absolute left-1/2 top-[14px] flex -translate-x-1/2 items-center justify-center">
           <Sun size={16} className="text-white [transform:translateZ(0)]" />
@@ -131,7 +137,80 @@ function ToggleButton({ isDark, onToggle }) {
   )
 }
 
-export default function Gnb({ theme, isDark = false, onToggleLightDark }) {
+// GNB 컴포넌트
+export default function Gnb({
+  theme,
+  isDark = false,
+  onToggleLightDark,
+
+  // 부모가 제어하고 싶을 때 사용
+  activeTab,
+
+  // 클릭될 때 부모에게 알려줌
+  onTabChange,
+
+  // 각 버튼 클릭 시 개별 액션
+  onImageAction,
+  onNoteAction,
+}) {
+  const tabs = ["image", "note"]
+
+  // 부모가 activeTab을 안 넘겨도 내부에서 직접 동작하도록 기본 상태 추가
+  const [innerTab, setInnerTab] = useState("note")
+
+  // controlled / uncontrolled 둘 다 지원
+  const currentTab = activeTab ?? innerTab
+
+  const changeTab = (tab) => {
+    // 부모가 activeTab을 안 주는 경우 내부 상태로 직접 변경
+    if (activeTab === undefined) {
+      setInnerTab(tab)
+    }
+
+    // 부모 상태 변경이 필요한 경우 같이 호출
+    onTabChange?.(tab)
+
+    // 버튼처럼 눌렀을 때마다 액션 실행
+    if (tab === "image") {
+      onImageAction?.()
+    }
+
+    if (tab === "note") {
+      onNoteAction?.()
+    }
+  }
+
+  const handleTabKeyDown = (e, currentTabName) => {
+    const currentIndex = tabs.indexOf(currentTabName)
+
+    if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+      e.preventDefault()
+      const nextIndex = (currentIndex + 1) % tabs.length
+      changeTab(tabs[nextIndex])
+    }
+
+    if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+      e.preventDefault()
+      const prevIndex = (currentIndex - 1 + tabs.length) % tabs.length
+      changeTab(tabs[prevIndex])
+    }
+
+    if (e.key === "Home") {
+      e.preventDefault()
+      changeTab(tabs[0])
+    }
+
+    if (e.key === "End") {
+      e.preventDefault()
+      changeTab(tabs[tabs.length - 1])
+    }
+
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault()
+      changeTab(currentTabName)
+    }
+  }
+
   return (
     <aside
       className="
@@ -139,6 +218,7 @@ export default function Gnb({ theme, isDark = false, onToggleLightDark }) {
         lg:static lg:h-full lg:min-h-[820px] lg:w-[70px] lg:flex-col xl:w-[90px]
       "
     >
+      {/* 로고 영역 */}
       <div
         className="flex h-[54px] w-[54px] flex-shrink-0 items-center justify-center overflow-hidden rounded-full text-sm font-semibold text-white lg:h-auto lg:w-full lg:aspect-square"
         style={{
@@ -152,8 +232,9 @@ export default function Gnb({ theme, isDark = false, onToggleLightDark }) {
         C
       </div>
 
+      {/* 메뉴/토글/프로필 래퍼 */}
       <div
-        className="flex min-w-0 flex-1 p-1 flex-row items-center justify-between rounded-[999px] lg:p-2 shadow-sm lg:w-full lg:flex-col lg:rounded-[80px]"
+        className="flex min-w-0 flex-1 flex-row items-center justify-between rounded-[999px] p-1 shadow-sm lg:w-full lg:flex-col lg:rounded-[80px] lg:p-2"
         style={{
           background: isDark ? "rgba(10,10,10,0.6)" : "rgba(255,255,255,0.22)",
           backdropFilter: "blur(32px) saturate(160%)",
@@ -164,23 +245,60 @@ export default function Gnb({ theme, isDark = false, onToggleLightDark }) {
             : "inset 0 1px 0 rgba(255,255,255,0.30), 0 12px 40px rgba(0,0,0,0.10)",
         }}
       >
-        <nav className="flex min-w-0 flex-row items-center gap-2 sm:gap-3 lg:flex-col">
-          <IconButton theme={theme} isDark={isDark}>
+        {/* 상단 아이콘 메뉴 */}
+        <nav
+          className="flex min-w-0 flex-row items-center gap-2 sm:gap-3 lg:flex-col"
+          role="tablist"
+          aria-label="main tabs"
+          aria-orientation="vertical"
+        >
+          {/* 이미지 탭 */}
+          <IconButton
+            theme={theme}
+            isDark={isDark}
+            active={currentTab === "image"}
+            onClick={() => changeTab("image")}
+            ariaLabel="image tab"
+            role="tab"
+            tabIndex={0}
+            ariaSelected={currentTab === "image"}
+            id="tab-image"
+            controls="panel-image"
+            onKeyDown={(e) => handleTabKeyDown(e, "image")}
+          >
             <Image size={20} strokeWidth={2.2} />
           </IconButton>
 
-          <IconButton active theme={theme} isDark={isDark}>
+          {/* 메모 탭 */}
+          <IconButton
+            theme={theme}
+            isDark={isDark}
+            active={currentTab === "note"}
+            onClick={() => changeTab("note")}
+            ariaLabel="note tab"
+            role="tab"
+            tabIndex={0}
+            ariaSelected={currentTab === "note"}
+            id="tab-note"
+            controls="panel-note"
+            onKeyDown={(e) => handleTabKeyDown(e, "note")}
+          >
             <PenLine size={20} strokeWidth={2.2} />
           </IconButton>
         </nav>
 
+        {/* 하단 토글 + 프로필 */}
         <div className="flex items-center gap-2 md:gap-4 lg:flex-col">
           <div className="flex">
             <ToggleButton isDark={isDark} onToggle={onToggleLightDark} />
           </div>
 
-          <div className="h-[45px] lg:h-[54px] w-[45px] lg:w-[54px] flex-shrink-0 overflow-hidden rounded-full border border-white/25 shadow-[0_10px_30px_rgba(0,0,0,0.12)] lg:h-auto lg:w-full lg:aspect-square">
-            <img src="./img/img8.jpg" alt="profile" className="h-full w-full object-cover object-center" />
+          <div className="h-[45px] w-[45px] flex-shrink-0 overflow-hidden rounded-full border border-white/25 shadow-[0_10px_30px_rgba(0,0,0,0.12)] lg:h-auto lg:w-full lg:aspect-square">
+            <img
+              src="./img/img8.jpg"
+              alt="profile"
+              className="h-full w-full object-cover object-center"
+            />
           </div>
         </div>
       </div>
