@@ -108,17 +108,47 @@ export default function CalendarSection({ date, onDateChange, theme, isDark }) {
       }}
     >
       <div className="mb-3 flex items-center justify-between gap-3">
-        <p
-          className={`
-            text-base font-semibold lg:text-lg
-            transition-colors duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]
-            ${safeTheme.text}
-          `}
-        >
-          {monthLabel}
-        </p>
+        <div className="flex min-w-0 items-center gap-3">
+          <p
+            className={`
+              shrink-0 text-base font-semibold lg:text-lg
+              transition-colors duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]
+              ${safeTheme.text}
+            `}
+          >
+            {monthLabel}
+          </p>
 
-        <div className="flex items-center gap-2">
+          {!isCurrentMonthView && (
+            <button
+              type="button"
+              onClick={handleGoToday}
+              className={`
+                inline-flex h-9 items-center justify-center rounded-full px-3 text-sm font-medium cursor-pointer
+                relative overflow-hidden whitespace-nowrap
+                [transform:translateZ(0)] [backface-visibility:hidden]
+                [isolation:isolate] [contain:paint]
+                transition-[background,border-color,box-shadow,color,opacity] duration-500
+                ease-[cubic-bezier(0.22,1,0.36,1)]
+                ${safeTheme.text}
+                ${
+                  isDark
+                    ? "bg-[linear-gradient(180deg,rgba(255,255,255,0.10)_0%,rgba(255,255,255,0.06)_100%)] border border-white/15 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_4px_6px_rgba(0,0,0,0.18)]"
+                    : "bg-[linear-gradient(180deg,rgba(255,255,255,0.30)_0%,rgba(255,255,255,0.10)_100%)] border border-white/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_4px_6px_rgba(0,0,0,0.10)]"
+                }
+                before:pointer-events-none before:absolute before:inset-0 before:rounded-full
+                before:opacity-0 before:transition-opacity before:duration-200
+                before:ease-[cubic-bezier(0.22,1,0.36,1)]
+                ${isDark ? "before:bg-white/10" : "before:bg-white/20"}
+                hover:before:opacity-100
+              `}
+            >
+              <span className="relative z-10">오늘</span>
+            </button>
+          )}
+        </div>
+
+        <div className="flex shrink-0 items-center gap-2">
           <button
             type="button"
             onClick={handlePrevMonth}
@@ -151,34 +181,6 @@ export default function CalendarSection({ date, onDateChange, theme, isDark }) {
               `}
             />
           </button>
-
-          {!isCurrentMonthView && (
-            <button
-              type="button"
-              onClick={handleGoToday}
-              className={`
-                inline-flex h-9 items-center justify-center rounded-full px-3 text-sm font-medium cursor-pointer
-                relative overflow-hidden whitespace-nowrap
-                [transform:translateZ(0)] [backface-visibility:hidden]
-                [isolation:isolate] [contain:paint]
-                transition-[background,border-color,box-shadow,color,opacity] duration-500
-                ease-[cubic-bezier(0.22,1,0.36,1)]
-                ${safeTheme.text}
-                ${
-                  isDark
-                    ? "bg-[linear-gradient(180deg,rgba(255,255,255,0.10)_0%,rgba(255,255,255,0.06)_100%)] border border-white/15 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_4px_6px_rgba(0,0,0,0.18)]"
-                    : "bg-[linear-gradient(180deg,rgba(255,255,255,0.30)_0%,rgba(255,255,255,0.10)_100%)] border border-white/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_4px_6px_rgba(0,0,0,0.10)]"
-                }
-                before:pointer-events-none before:absolute before:inset-0 before:rounded-full
-                before:opacity-0 before:transition-opacity before:duration-200
-                before:ease-[cubic-bezier(0.22,1,0.36,1)]
-                ${isDark ? "before:bg-white/10" : "before:bg-white/20"}
-                hover:before:opacity-100
-              `}
-            >
-              <span className="relative z-10">오늘</span>
-            </button>
-          )}
 
           <button
             type="button"
@@ -229,7 +231,7 @@ export default function CalendarSection({ date, onDateChange, theme, isDark }) {
         hideNavigation
         required
         className={`
-          h-full w-full bg-white/0 p-0
+          h-[calc(100%-55px)] w-full bg-white/0 p-0
           transition-colors duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]
           ${isDark ? "dark-calendar" : ""}
         `}
@@ -243,7 +245,7 @@ export default function CalendarSection({ date, onDateChange, theme, isDark }) {
         }}
         classNames={{
           months: "flex h-full w-full flex-col gap-3",
-          month: "flex h-full w-full flex-col gap-3",
+          month: "flex h-full w-full flex-col gap-3 justify-center",
           month_caption: "hidden",
           caption_label: `
             mt-0 text-base font-semibold
