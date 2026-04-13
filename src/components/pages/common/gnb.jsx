@@ -253,7 +253,7 @@ export default function Gnb({
           aria-orientation="vertical"
         >
           {/* 이미지 탭 */}
-          <IconButton
+          {/* <IconButton
             theme={theme}
             isDark={isDark}
             active={currentTab === "image"}
@@ -267,10 +267,10 @@ export default function Gnb({
             onKeyDown={(e) => handleTabKeyDown(e, "image")}
           >
             <Image size={20} strokeWidth={2.2} />
-          </IconButton>
+          </IconButton> */}
 
           {/* 메모 탭 */}
-          <IconButton
+          {/* <IconButton
             theme={theme}
             isDark={isDark}
             active={currentTab === "note"}
@@ -284,7 +284,7 @@ export default function Gnb({
             onKeyDown={(e) => handleTabKeyDown(e, "note")}
           >
             <PenLine size={20} strokeWidth={2.2} />
-          </IconButton>
+          </IconButton> */}
         </nav>
 
         {/* 하단 토글 + 프로필 */}
