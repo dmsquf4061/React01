@@ -32,9 +32,9 @@ export default function ClockSection({ isDark }) {
         rounded-[14px]
         px-4
 
-        w-[220px] h-[72px]
-        lg:left-4 lg:bottom-[480px] lg:rounded-[18px]
-        xl:left-5 xl:bottom-[480px] lg:w-[345px] xl:w-[340px] lg:h-[100px] xl:rounded-[30px]
+        w-[220px] h-[72px] rounded-[8px]
+        lg:left-4 lg:bottom-[480px] lg:rounded-[16px]
+        xl:left-5 xl:bottom-[480px] lg:w-[345px] xl:w-[340px] lg:h-[100px] xl:rounded-[32px]
 
         text-white
       "

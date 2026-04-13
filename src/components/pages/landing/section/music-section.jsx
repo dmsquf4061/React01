@@ -78,11 +78,30 @@ export default function MusicSection({
   isDark,
 }) {
   const progressPercent = duration ? (currentTime / duration) * 100 : 0
-  const volumePercent = volume * 100
+  const volumePercent = Math.max(0, Math.min(100, volume * 100))
+
+  const handleSeekChange = (e) => {
+    onSeek?.(e)
+  }
+
+  const handleVolumeInput = (e) => {
+    const nextVolume = Number(e.target.value)
+
+    if (audioRef?.current) {
+      try {
+        audioRef.current.volume = nextVolume
+        audioRef.current.muted = nextVolume <= 0
+      } catch {
+        // iOS Safari 등 일부 모바일 환경에서는 volume 제어가 제한될 수 있음
+      }
+    }
+
+    onVolumeChange?.(e)
+  }
 
   return (
     <section
-      className={`rounded-[10px] p-4 md:self-start lg:flex lg:rounded-[20px] lg:p-6 xl:rounded-[40px] flex-col gap-4 h-full ${panelBg} justify-between`}
+      className={`flex h-full flex-col justify-between gap-4 rounded-[8px] p-4 md:self-start lg:rounded-[16px] lg:p-6 xl:rounded-[32px] ${panelBg}`}
       style={{
         background: isDark
           ? "linear-gradient(180deg, rgba(0,0,0,0.30) 0%, rgba(0,0,0,0.10) 100%)"
@@ -99,11 +118,15 @@ export default function MusicSection({
     >
       <div className="flex items-start justify-between gap-4">
         <div className="min-w-0 text-left">
-          <p className={`truncate text-xl lg:mb-1 ${theme.text}`}>{currentTrack.title}</p>
-          <p className={`mt-2 text-sm ${theme.subtext}`}>{currentTrack.artist}</p>
+          <p className={`truncate text-xl lg:mb-1 ${theme.text}`}>
+            {currentTrack.title}
+          </p>
+          <p className={`mt-2 text-sm ${theme.subtext}`}>
+            {currentTrack.artist}
+          </p>
         </div>
 
-        <p className={`shrink-0 font-medium leading-none text-[12px] ${theme.subtext}`}>
+        <p className={`shrink-0 text-[12px] font-medium leading-none ${theme.subtext}`}>
           {currentTrackIndex + 1}/{totalTracks}
         </p>
       </div>
@@ -122,12 +145,16 @@ export default function MusicSection({
             max={duration || 0}
             step="0.1"
             value={currentTime}
-            onChange={onSeek}
+            onChange={handleSeekChange}
+            onInput={handleSeekChange}
             className="music-range h-2 w-full cursor-pointer appearance-none rounded-full"
             style={{
               background: `linear-gradient(to right, ${theme.swatch} 0%, ${theme.swatch} ${progressPercent}%, #fff ${progressPercent}%, #fff 100%)`,
               ["--range-thumb-color"]: theme.swatch,
+              WebkitTapHighlightColor: "transparent",
+              touchAction: "pan-x",
             }}
+            aria-label="track progress"
           />
         </div>
 
@@ -154,7 +181,7 @@ export default function MusicSection({
             </PlayerRoundButton>
           </div>
 
-          <div className="flex items-center justify-end gap-2">
+          <div className="flex min-w-0 items-center justify-end gap-2">
             <Volume2 className={`h-4 w-4 shrink-0 ${isDark ? "text-white/70" : theme.subtext}`} />
 
             <input
@@ -163,12 +190,16 @@ export default function MusicSection({
               max="1"
               step="0.01"
               value={volume}
-              onChange={onVolumeChange}
-              className="music-range h-2 w-24 cursor-pointer appearance-none rounded-full sm:w-28"
+              onChange={handleVolumeInput}
+              onInput={handleVolumeInput}
+              className="music-range h-2 w-20 cursor-pointer appearance-none rounded-full sm:w-24 md:w-28"
               style={{
                 background: `linear-gradient(to right, ${theme.swatch} 0%, ${theme.swatch} ${volumePercent}%, #fff ${volumePercent}%, #fff 100%)`,
                 ["--range-thumb-color"]: theme.swatch,
+                WebkitTapHighlightColor: "transparent",
+                touchAction: "pan-x",
               }}
+              aria-label="volume"
             />
           </div>
         </div>

@@ -8,7 +8,7 @@ export default function ColorSection({
 }) {
   return (
     <section
-      className={`rounded-[10px] p-4 lg:p-6 md:self-start lg:rounded-[20px] xl:rounded-[40px] ${panelBg} flex flex-col gap-4 h-full justify-between`}
+      className={`rounded-[8px] p-4 lg:p-6 md:self-start lg:rounded-[16px] xl:rounded-[32px] ${panelBg} flex flex-col gap-4 h-full justify-between`}
       style={{
         background: isDark ? "linear-gradient(rgb(0 0 0 / 30%) 0%, rgb(0 0 0 / 10%) 100%)" : "linear-gradient(180deg, rgba(255,255,255,0.30) 0%, rgba(255,255,255,0.10) 100%)",
         backdropFilter: "blur(32px)",

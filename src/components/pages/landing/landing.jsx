@@ -28,6 +28,8 @@ const STORE_NAME = "castingImages"
 const MAX_CASTING_IMAGES = 8
 
 const BASE = import.meta.env.BASE_URL
+const EASE = "cubic-bezier(0.22, 1, 0.36, 1)"
+const THEME_TRANSITION = `background 520ms ${EASE}, border-color 520ms ${EASE}, box-shadow 520ms ${EASE}, color 320ms ${EASE}, opacity 320ms ${EASE}, filter 520ms ${EASE}`
 
 const DEFAULT_CASTING_ITEMS = [
   { id: "default-1", src: `${BASE}img/img10.jpg`, alt: "casting 1", isDefault: true },
@@ -48,11 +50,12 @@ const THEMES = [
     text: "text-stone-800",
     subtext: "text-stone-400",
     accent: "bg-stone-700/50",
-    // calendarToday: "[&>button]:bg-stone-200/60",
-    // calendarSelected: "[&>button]:bg-stone-900 [&>button]:text-white [&>button]:hover:bg-stone-900",
-    // calendarSelectedButton: "aria-selected:bg-stone-900 aria-selected:text-white aria-selected:hover:bg-stone-900 !transition-none",
-    // calendarCaption: "text-stone-900",
-    // calendarWeekday: "text-stone-400",
+    calendarToday: "[&>button]:bg-stone-200/60",
+    calendarSelected: "[&>button]:bg-stone-900 [&>button]:text-white [&>button]:hover:bg-stone-900",
+    calendarSelectedButton:
+      "aria-selected:bg-stone-900 aria-selected:text-white aria-selected:hover:bg-stone-900 !transition-none",
+    calendarCaption: "text-stone-900",
+    calendarWeekday: "text-stone-400",
     castingTitle: "text-stone-700",
     castingSubtitle: "text-stone-400",
     gnbText: "text-stone-900",
@@ -66,11 +69,12 @@ const THEMES = [
     text: "text-white",
     subtext: "text-white/70",
     accent: "bg-white/50",
-    // calendarToday: "[&>button]:bg-white/20",
-    // calendarSelected: "[&>button]:bg-white [&>button]:text-stone-900 [&>button]:hover:bg-white",
-    // calendarSelectedButton: "aria-selected:bg-white aria-selected:text-stone-900 aria-selected:hover:bg-white !transition-none",
-    // calendarCaption: "text-white",
-    // calendarWeekday: "text-white/60",
+    calendarToday: "[&>button]:bg-white/20",
+    calendarSelected: "[&>button]:bg-white [&>button]:text-stone-900 [&>button]:hover:bg-white",
+    calendarSelectedButton:
+      "aria-selected:bg-white aria-selected:text-stone-900 aria-selected:hover:bg-white !transition-none",
+    calendarCaption: "text-white",
+    calendarWeekday: "text-white/60",
     castingTitle: "text-white",
     castingSubtitle: "text-white/70",
     gnbText: "text-white",
@@ -83,11 +87,12 @@ const THEMES = [
     text: "text-blue-900",
     subtext: "text-stone-400",
     accent: "bg-blue-800/50",
-    // calendarToday: "[&>button]:bg-blue-200/60",
-    // calendarSelected: "[&>button]:bg-blue-700 [&>button]:text-white [&>button]:hover:bg-blue-700",
-    // calendarSelectedButton: "aria-selected:bg-blue-700 aria-selected:text-white aria-selected:hover:bg-blue-700 !transition-none",
-    // calendarCaption: "text-blue-900",
-    // calendarWeekday: "text-blue-400",
+    calendarToday: "[&>button]:bg-blue-200/60",
+    calendarSelected: "[&>button]:bg-blue-700 [&>button]:text-white [&>button]:hover:bg-blue-700",
+    calendarSelectedButton:
+      "aria-selected:bg-blue-700 aria-selected:text-white aria-selected:hover:bg-blue-700 !transition-none",
+    calendarCaption: "text-blue-900",
+    calendarWeekday: "text-blue-400",
     castingTitle: "text-blue-900",
     castingSubtitle: "text-blue-500",
     gnbText: "text-blue-900",
@@ -100,11 +105,12 @@ const THEMES = [
     text: "text-green-900",
     subtext: "text-stone-400",
     accent: "bg-green-800/50",
-    // calendarToday: "[&>button]:bg-green-200/60",
-    // calendarSelected: "[&>button]:bg-green-700 [&>button]:text-white [&>button]:hover:bg-green-700",
-    // calendarSelectedButton: "aria-selected:bg-green-700 aria-selected:text-white aria-selected:hover:bg-green-700 !transition-none",
-    // calendarCaption: "text-green-900",
-    // calendarWeekday: "text-green-400",
+    calendarToday: "[&>button]:bg-green-200/60",
+    calendarSelected: "[&>button]:bg-green-700 [&>button]:text-white [&>button]:hover:bg-green-700",
+    calendarSelectedButton:
+      "aria-selected:bg-green-700 aria-selected:text-white aria-selected:hover:bg-green-700 !transition-none",
+    calendarCaption: "text-green-900",
+    calendarWeekday: "text-green-400",
     castingTitle: "text-green-900",
     castingSubtitle: "text-green-500",
     gnbText: "text-green-900",
@@ -117,11 +123,12 @@ const THEMES = [
     text: "text-pink-700",
     subtext: "text-stone-400",
     accent: "bg-pink-700/50",
-    // calendarToday: "[&>button]:bg-pink-200/60",
-    // calendarSelected: "[&>button]:bg-pink-700 [&>button]:text-white [&>button]:hover:bg-pink-700",
-    // calendarSelectedButton: "aria-selected:bg-pink-700 aria-selected:text-white aria-selected:hover:bg-pink-700 !transition-none",
-    // calendarCaption: "text-pink-900",
-    // calendarWeekday: "text-pink-400",
+    calendarToday: "[&>button]:bg-pink-200/60",
+    calendarSelected: "[&>button]:bg-pink-700 [&>button]:text-white [&>button]:hover:bg-pink-700",
+    calendarSelectedButton:
+      "aria-selected:bg-pink-700 aria-selected:text-white aria-selected:hover:bg-pink-700 !transition-none",
+    calendarCaption: "text-pink-900",
+    calendarWeekday: "text-pink-400",
     castingTitle: "text-pink-900",
     castingSubtitle: "text-pink-500",
     gnbText: "text-pink-900",
@@ -134,11 +141,12 @@ const THEMES = [
     text: "text-amber-600",
     subtext: "text-stone-400",
     accent: "bg-amber-500/50",
-    // calendarToday: "[&>button]:bg-amber-200/60",
-    // calendarSelected: "[&>button]:bg-amber-700 [&>button]:text-white [&>button]:hover:bg-amber-700",
-    // calendarSelectedButton: "aria-selected:bg-amber-700 aria-selected:text-white aria-selected:hover:bg-amber-700 !transition-none",
-    // calendarCaption: "text-amber-900",
-    // calendarWeekday: "text-amber-400",
+    calendarToday: "[&>button]:bg-amber-200/60",
+    calendarSelected: "[&>button]:bg-amber-700 [&>button]:text-white [&>button]:hover:bg-amber-700",
+    calendarSelectedButton:
+      "aria-selected:bg-amber-700 aria-selected:text-white aria-selected:hover:bg-amber-700 !transition-none",
+    calendarCaption: "text-amber-900",
+    calendarWeekday: "text-amber-400",
     castingTitle: "text-amber-900",
     castingSubtitle: "text-amber-500",
     gnbText: "text-amber-900",
@@ -154,12 +162,14 @@ const DEFAULT_COLOR_THEME = COLOR_THEMES[0]
 function openImageDB() {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, DB_VERSION)
+
     request.onupgradeneeded = () => {
       const db = request.result
       if (!db.objectStoreNames.contains(STORE_NAME)) {
         db.createObjectStore(STORE_NAME, { keyPath: "id" })
       }
     }
+
     request.onsuccess = () => resolve(request.result)
     request.onerror = () => reject(request.error)
   })
@@ -167,9 +177,11 @@ function openImageDB() {
 
 async function getAllCastingImagesFromDB() {
   const db = await openImageDB()
+
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORE_NAME, "readonly")
     const request = tx.objectStore(STORE_NAME).getAll()
+
     request.onsuccess = () => resolve(request.result || [])
     request.onerror = () => reject(request.error)
   })
@@ -177,9 +189,11 @@ async function getAllCastingImagesFromDB() {
 
 async function saveCastingImageToDB(item) {
   const db = await openImageDB()
+
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORE_NAME, "readwrite")
     const request = tx.objectStore(STORE_NAME).put(item)
+
     request.onsuccess = () => resolve(item)
     request.onerror = () => reject(request.error)
   })
@@ -187,9 +201,11 @@ async function saveCastingImageToDB(item) {
 
 async function deleteCastingImageFromDB(id) {
   const db = await openImageDB()
+
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORE_NAME, "readwrite")
     const request = tx.objectStore(STORE_NAME).delete(id)
+
     request.onsuccess = () => resolve(true)
     request.onerror = () => reject(request.error)
   })
@@ -224,8 +240,10 @@ function roundedClipPath(w, h, r = 80, memoW, memoBottom, clip) {
     [calendarW * w, calendarTop * h],
     [0, calendarTop * h],
   ]
+
   const n = pts.length
   let d = ""
+
   for (let i = 0; i < n; i++) {
     const prev = pts[(i - 1 + n) % n]
     const curr = pts[i]
@@ -236,9 +254,11 @@ function roundedClipPath(w, h, r = 80, memoW, memoBottom, clip) {
     const p1 = lerp(curr, prev, rr / d1)
     const p2 = lerp(curr, next, rr / d2)
     const f = (v) => parseFloat(v.toFixed(2))
+
     d += i === 0 ? `M${f(p1[0])},${f(p1[1])}` : ` L${f(p1[0])},${f(p1[1])}`
     d += ` Q${f(curr[0])},${f(curr[1])} ${f(p2[0])},${f(p2[1])}`
   }
+
   return `path("${d} Z")`
 }
 
@@ -267,6 +287,8 @@ export default function Landing() {
 
   const theme = isDarkMode ? DARK_THEME : selectedTheme
   const isDark = isDarkMode
+  const panelBg = isDark ? "bg-black/30" : "bg-white/30"
+  const sectionBg = isDark ? "bg-black/20" : "bg-white/0"
 
   useEffect(() => {
     const savedMemo = localStorage.getItem(MEMO_KEY)
@@ -298,10 +320,12 @@ export default function Landing() {
         .select("content")
         .eq("id", 1)
         .maybeSingle()
+
       if (error) {
         console.warn("memo fetch warning:", error.message)
         return
       }
+
       if (data?.content) {
         setMemo(data.content)
         localStorage.setItem(MEMO_KEY, data.content)
@@ -323,17 +347,22 @@ export default function Landing() {
     const initCastingImages = async () => {
       try {
         const alreadyInitialized = localStorage.getItem(CASTING_DEFAULTS_KEY)
+
         if (!alreadyInitialized) {
           for (const item of DEFAULT_CASTING_ITEMS) {
             await saveCastingImageToDB(item)
           }
           localStorage.setItem(CASTING_DEFAULTS_KEY, "true")
         }
+
         const savedItems = await getAllCastingImagesFromDB()
         const normalizedItems = savedItems.length ? savedItems : DEFAULT_CASTING_ITEMS
+
         setCastingItems(normalizedItems)
+
         const savedMainImage = localStorage.getItem(MAIN_IMAGE_KEY)
         const exists = normalizedItems.some((item) => item.src === savedMainImage)
+
         if (savedMainImage && exists) {
           setMainImage(savedMainImage)
         } else {
@@ -349,32 +378,46 @@ export default function Landing() {
         setIsCastingReady(true)
       }
     }
+
     initCastingImages()
   }, [])
 
   useEffect(() => {
     const el = clipRef.current
     if (!el) return
+
     const update = () => {
       const w = el.offsetWidth
       const h = el.offsetHeight
       const vw = window.innerWidth
       const lg = vw >= 1024
+
       setIsLg(lg)
+
       if (!lg) {
         setClip("")
         return
       }
-      const r = vw >= 1536 ? 60 : vw >= 1280 ? 50 : 38
+
+      const r = vw >= 1280 ? 32 : vw >= 1024 ? 16 : 8
       const memoW = MEMO_SIZE / w
       const memoBottom = MEMO_SIZE / h
       const calendarW = CALENDAR_BOX_W / w
       const calendarTop = 1 - CALENDAR_BOX_H / h
-      setClip(roundedClipPath(w, h, r, memoW, memoBottom, { calendarW, calendarTop }))
+
+      setClip(
+        roundedClipPath(w, h, r, memoW, memoBottom, {
+          calendarW,
+          calendarTop,
+        })
+      )
     }
+
     update()
+
     const ro = new ResizeObserver(update)
     ro.observe(clipRef.current)
+
     return () => ro.disconnect()
   }, [loadingDone, castingItems.length, mainImage])
 
@@ -385,12 +428,14 @@ export default function Landing() {
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.volume = volume
+      audioRef.current.muted = volume <= 0
     }
   }, [volume])
 
   useEffect(() => {
     const audio = audioRef.current
     if (!audio) return
+
     audio.pause()
     audio.load()
     setCurrentTime(0)
@@ -400,18 +445,23 @@ export default function Landing() {
 
   const handleMemoSave = async (nextMemo) => {
     const now = new Date().toLocaleDateString("ko-KR")
+
     setMemo(nextMemo)
     setMemoDate(now)
+
     localStorage.setItem(MEMO_KEY, nextMemo)
     localStorage.setItem(MEMO_KEY + "_date", now)
+
     const { error } = await supabase
       .from("memo")
       .upsert({ id: 1, content: nextMemo }, { onConflict: "id" })
+
     if (error) console.warn("memo save warning:", error.message)
   }
 
   const handleThemeChange = (nextTheme) => {
-    if (nextTheme.id !== "white") setSelectedTheme(nextTheme)
+    if (!nextTheme || nextTheme.id === "white") return
+    setSelectedTheme(nextTheme)
   }
 
   const handleToggleLightDark = () => {
@@ -423,6 +473,7 @@ export default function Landing() {
       alert(`이미지는 최대 ${MAX_CASTING_IMAGES}개까지 추가할 수 있어요.`)
       return
     }
+
     fileInputRef.current?.click()
   }
 
@@ -434,21 +485,26 @@ export default function Landing() {
   const handleAddCastingImages = async (e) => {
     const files = Array.from(e.target.files || [])
     if (!files.length) return
+
     const imageFiles = files.filter((file) => file.type.startsWith("image/"))
     if (!imageFiles.length) {
       e.target.value = ""
       return
     }
+
     const remainingSlots = MAX_CASTING_IMAGES - castingItems.length
     if (remainingSlots <= 0) {
       alert(`이미지는 최대 ${MAX_CASTING_IMAGES}개까지 추가할 수 있어요.`)
       e.target.value = ""
       return
     }
+
     const limitedFiles = imageFiles.slice(0, remainingSlots)
+
     if (imageFiles.length > remainingSlots) {
       alert(`최대 ${MAX_CASTING_IMAGES}개까지 가능해서 ${remainingSlots}개만 추가했어요.`)
     }
+
     try {
       const newItems = await Promise.all(
         limitedFiles.map(async (file, index) => {
@@ -461,10 +517,13 @@ export default function Landing() {
           }
         })
       )
+
       for (const item of newItems) {
         await saveCastingImageToDB(item)
       }
+
       setCastingItems((prev) => [...prev, ...newItems])
+
       if (newItems[0]) {
         handleSelectMainImage(newItems[0].src)
       }
@@ -478,11 +537,14 @@ export default function Landing() {
   const handleDeleteCastingImage = async (id) => {
     const target = castingItems.find((item) => item.id === id)
     if (!target) return
+
     const nextItems = castingItems.filter((item) => item.id !== id)
     if (!nextItems.length) return
+
     try {
       await deleteCastingImageFromDB(id)
       setCastingItems(nextItems)
+
       if (mainImage === target.src) {
         handleSelectMainImage(nextItems[0].src)
       }
@@ -502,6 +564,7 @@ export default function Landing() {
   const handleTogglePlay = async () => {
     const audio = audioRef.current
     if (!audio) return
+
     try {
       if (audio.paused) {
         await audio.play()
@@ -515,18 +578,26 @@ export default function Landing() {
 
   const handleSeek = (e) => {
     const audio = audioRef.current
-    const nextTime = Number(e.target.value)
     if (!audio) return
+
+    const nextTime = Number(e.target.value)
     audio.currentTime = nextTime
     setCurrentTime(nextTime)
   }
 
   const handleVolumeChange = (e) => {
-    setVolume(Number(e.target.value))
-  }
+    const nextVolume = Number(e.target.value)
+    setVolume(nextVolume)
 
-  const panelBg = isDark ? "bg-black/30" : "bg-white/30"
-  const sectionBg = isDark ? "bg-black/20" : "bg-white/0"
+    if (audioRef.current) {
+      try {
+        audioRef.current.volume = nextVolume
+        audioRef.current.muted = nextVolume <= 0
+      } catch (error) {
+        console.warn("volume change warning:", error)
+      }
+    }
+  }
 
   return (
     <>
@@ -535,8 +606,9 @@ export default function Landing() {
       ) : (
         <>
           <div
-            className="min-h-screen bg-cover bg-center lg:p-0 xl:p-6"
+            className="min-h-screen bg-cover bg-center lg:p-0 xl:p-6 transition-[background,box-shadow,filter] duration-500"
             style={{
+              transitionTimingFunction: EASE,
               backgroundImage: isDark
                 ? `linear-gradient(to right bottom, rgba(0,0,0,0.6), rgba(0,0,0,0.3)), url('${mainImage}')`
                 : `linear-gradient(to right bottom, rgba(255,255,255,0.4), rgba(255,255,255,0.3)), url('${mainImage}')`,
@@ -546,12 +618,15 @@ export default function Landing() {
             }}
           >
             <div
-              className="flex h-full lg:min-h-[868px] lg:min-w-[1290px] w-full flex-col gap-4 overflow-y-auto lg:overflow-hidden p-4 lg:flex-row lg:gap-4 lg:rounded-[0px] lg:p-4 xl:rounded-[60px]"
+              className="flex h-full w-full min-h-screen flex-col gap-4 overflow-y-auto p-4 lg:min-h-[868px] lg:min-w-[1290px] lg:flex-row lg:gap-4 lg:overflow-hidden lg:rounded-[0px] lg:p-4 xl:rounded-[40px] transition-[background,border-color,box-shadow] duration-500"
               style={{
+                transitionTimingFunction: EASE,
                 background: isDark ? "rgba(10,10,10,0.6)" : "rgba(255,255,255,0.14)",
                 backdropFilter: "blur(32px) saturate(160%)",
                 WebkitBackdropFilter: "blur(32px) saturate(160%)",
-                border: isDark ? "1px solid rgba(255,255,255,0.12)" : "1px solid rgba(255,255,255,0.28)",
+                border: isDark
+                  ? "1px solid rgba(255,255,255,0.12)"
+                  : "1px solid rgba(255,255,255,0.28)",
                 boxShadow: isDark
                   ? "inset 0 1px 0 rgb(0 0 0 / 8%), inset 0 -1px 0 rgba(0,0,0,0.8), 0 1px 3px rgba(0,0,0,0.6)"
                   : "inset 0 1px 0 rgb(255 255 255 / 8%), inset 0 -1px 0 rgba(255,255,255,0.1), 0 1px 3px rgba(0,0,0,0.12)",
@@ -573,11 +648,13 @@ export default function Landing() {
                 memoDate={memoDate}
                 onMemoOpen={() => setMemoOpen(true)}
                 date={date}
-                onDateChange={(d) => { if (d) setDate(d) }}
+                onDateChange={(d) => {
+                  if (d) setDate(d)
+                }}
               />
 
               <aside className="w-full lg:w-[400px] lg:min-h-[820px] lg:shrink-0 lg:overflow-y-auto no-scrollbar">
-                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-1 h-full">
+                <div className="grid h-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-1">
                   <ImageSection
                     castingItems={castingItems}
                     mainImage={mainImage}
@@ -626,8 +703,11 @@ export default function Landing() {
                     onLoadedMetadata={(e) => {
                       setDuration(e.currentTarget.duration || 0)
                       setCurrentTime(0)
+
                       if (loadingDone) {
-                        e.currentTarget.play().catch((err) => console.warn("autoplay warning:", err))
+                        e.currentTarget.play().catch((err) => {
+                          console.warn("autoplay warning:", err)
+                        })
                       }
                     }}
                     onTimeUpdate={(e) => {

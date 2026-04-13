@@ -27,7 +27,7 @@ export default function MemoSection({
         <button
           type="button"
           onClick={onMemoOpen}
-          className="relative flex min-h-[260px] h-full h-[220px] w-full flex-col justify-center gap-2 rounded-[10px] p-4 lg:justify-between text-left lg:h-full lg:rounded-[20px] lg:p-6 xl:rounded-[40px]"
+          className="relative cursor-pointer flex min-h-[260px] h-full h-[220px] w-full flex-col justify-center gap-2 rounded-[8px] p-4 lg:justify-between text-left lg:h-full lg:rounded-[16px] lg:p-6 xl:rounded-[32px]"
           style={{
             background: isDark ? "linear-gradient(rgb(0 0 0 / 30%) 0%, rgb(0 0 0 / 10%) 100%)" : "linear-gradient(180deg, rgba(255,255,255,0.30) 0%, rgba(255,255,255,0.10) 100%)",
             backdropFilter: "blur(32px)",

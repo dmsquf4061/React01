@@ -22,17 +22,17 @@ export default function MainSection({
       <section
         className="
           flex h-full w-full lg:min-h-[780px] flex-col gap-4 overflow-visible
-          rounded-[10px]
-          lg:relative lg:rounded-[20px]
-          xl:rounded-[40px]
+          rounded-[8px]
+          lg:relative lg:rounded-[16px]
+          xl:rounded-[32px]
         "
       >
         <div
           ref={clipRef}
           className="
-            relative inset-0 overflow-hidden rounded-[10px] shadow-md
-            lg:absolute lg:rounded-[30px]
-            xl:rounded-[50px]
+            relative inset-0 overflow-hidden rounded-[8px] shadow-md
+            lg:absolute lg:rounded-[16px]
+            xl:rounded-[32px]
           "
           style={{
             clipPath: isLg ? clip : undefined,

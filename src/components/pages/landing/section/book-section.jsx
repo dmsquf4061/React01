@@ -74,7 +74,7 @@ export default function BookSection({ theme, panelBg, isDark }) {
 
   return (
     <section
-      className={`rounded-[10px] py-4 md:self-start lg:h-full lg:rounded-[20px] lg:py-6 xl:rounded-[40px] ${panelBg} flex flex-col gap-4`}
+      className={`rounded-[8px] py-4 md:self-start lg:h-full lg:rounded-[16px] lg:py-6 xl:rounded-[32px] ${panelBg} flex flex-col gap-4`}
       style={panelStyle}
     >
       <Carousel

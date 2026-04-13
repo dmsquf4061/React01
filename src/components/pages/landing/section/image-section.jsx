@@ -36,8 +36,8 @@ export default function ImageSection({
   return (
     <section
       className={`
-        w-full rounded-[10px] p-4 lg:p-6
-        lg:rounded-[20px] xl:rounded-[40px] flex flex-col
+        w-full rounded-[8px] p-4 lg:p-6
+        lg:rounded-[16px] xl:rounded-[32px] flex flex-col
         ${sectionBg}
       `}
       style={{

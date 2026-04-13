@@ -28,12 +28,11 @@ export default function LoadingIntro({ onComplete }) {
       }}
     >
       <p className="text-8xl font-black tabular-nums">{count}</p>
-      {ready ? (
+
+      {ready && (
         <p className="mt-4 animate-pulse text-sm tracking-widest text-white/60">
           CLICK TO ENTER
         </p>
-      ) : (
-        <p className="mt-4 text-sm text-white/60">Please wait...</p>
       )}
     </div>
   )
