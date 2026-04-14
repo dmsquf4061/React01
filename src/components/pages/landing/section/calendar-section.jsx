@@ -120,9 +120,6 @@ export default function CalendarSection({ date, onDateChange, theme, isDark }) {
           ? "inset 0 1px 0 rgba(0,0,0,0.35), 0 10px 30px rgba(0,0,0,0.10)"
           : "inset 0 1px 0 rgba(255,255,255,0.35), 0 4px 10px rgba(0,0,0,0.10)",
         transition: `background 500ms ${EASE}, border-color 500ms ${EASE}, box-shadow 500ms ${EASE}, color 320ms ${EASE}`,
-
-        // 모바일에서 세로 스크롤 우선 처리
-        touchAction: "pan-y",
         WebkitTapHighlightColor: "transparent",
       }}
     >
@@ -166,7 +163,6 @@ export default function CalendarSection({ date, onDateChange, theme, isDark }) {
               `}
               style={{
                 WebkitTapHighlightColor: "transparent",
-                touchAction: "pan-y",
               }}
             >
               <span className="relative z-10">오늘</span>
@@ -200,10 +196,8 @@ export default function CalendarSection({ date, onDateChange, theme, isDark }) {
             `}
             style={{
               WebkitTapHighlightColor: "transparent",
-              touchAction: "pan-y",
             }}
           >
-            {/* 이전 달 아이콘 */}
             <ChevronLeft
               className={`
                 relative z-10 h-5 w-5
@@ -240,10 +234,8 @@ export default function CalendarSection({ date, onDateChange, theme, isDark }) {
             `}
             style={{
               WebkitTapHighlightColor: "transparent",
-              touchAction: "pan-y",
             }}
           >
-            {/* 다음 달 아이콘 */}
             <ChevronRight
               className={`
                 relative z-10 h-5 w-5
@@ -257,82 +249,93 @@ export default function CalendarSection({ date, onDateChange, theme, isDark }) {
       </div>
 
       {/* 캘린더 본문 */}
-      <Calendar
-        mode="single"
-        month={currentMonth}
-        onMonthChange={setCurrentMonth}
-        selected={date}
-        onSelect={(d) => {
-          onDateChange(d || date)
+      <div
+        className="h-[calc(100%-55px)] w-full"
+        style={{
+          // 캘린더 내부에서 터치 시작 후 세로 스크롤이 자연스럽게 부모로 넘어가도록
+          touchAction: "pan-y",
         }}
-        endMonth={todayMonth}
-        hideNavigation
-        required
-        className={`
-          h-[calc(100%-55px)] w-full bg-white/0 p-0
-          transition-colors duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]
-          ${isDark ? "dark-calendar" : ""}
-        `}
-        components={{
-          // 기본 chevron 아이콘 교체
-          Chevron: ({ orientation, className }) =>
-            orientation === "left" ? (
-              <ChevronLeft className={className} />
-            ) : (
-              <ChevronRight className={className} />
-            ),
-        }}
-        classNames={{
-          months: "flex h-full w-full flex-col gap-3",
-          month: "flex h-full w-full flex-col gap-3 justify-center",
-          month_caption: "hidden",
-          caption_label: `
-            mt-0 text-base font-semibold
+      >
+        <Calendar
+          mode="single"
+          month={currentMonth}
+          onMonthChange={setCurrentMonth}
+          selected={date}
+          onSelect={(d) => {
+            onDateChange(d || date)
+          }}
+          endMonth={todayMonth}
+          hideNavigation
+          required
+          className={`
+            h-full w-full bg-white/0 p-0
             transition-colors duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]
-            ${safeTheme.text}
-          `,
-          nav: "hidden",
-          month_grid: "w-full table-fixed border-collapse",
-          weekdays: "w-full",
-          weekday: `
-            pb-1 text-center text-[12px] font-medium
-            transition-colors duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]
-            ${safeTheme.calendarWeekday}
-          `,
-          weeks: "w-full",
-          week: "w-full",
-          today: `${safeTheme.calendarToday}`,
-          outside: "opacity-30",
-          disabled: "opacity-30",
-          selected: isDark ? "" : `${safeTheme.calendarSelected}`,
-          day: `
-            p-0 text-center align-middle select-none
-            h-[2.75rem] w-[2.75rem] md:h-[3rem] md:w-[3rem]
-          `,
-
-          // 모바일에서 날짜 버튼이 세로 스크롤을 덜 막도록 수정
-          // active scale 제거 / 세로 스크롤 우선권 부여
-          day_button: isDark
-            ? `
-              mx-auto inline-flex items-center justify-center rounded-full
-              h-[2.35rem] w-[2.35rem] md:h-[2.6rem] md:w-[2.6rem]
-              cursor-pointer text-white outline-none border-none ring-0
-              select-none
-              transition-[background,color,opacity] duration-300
-              ease-[cubic-bezier(0.22,1,0.36,1)]
-              ${safeTheme.calendarSelectedButton}
-            `
-            : `
-              mx-auto inline-flex items-center justify-center rounded-full
-              h-[2.35rem] w-[2.35rem] md:h-[2.6rem] md:w-[2.6rem]
-              cursor-pointer text-stone-900 outline-none border-none ring-0
-              select-none
-              transition-[background,color,opacity] duration-300
-              ease-[cubic-bezier(0.22,1,0.36,1)]
-              ${safeTheme.calendarSelectedButton}
+            ${isDark ? "dark-calendar" : ""}
+          `}
+          components={{
+            Chevron: ({ orientation, className }) =>
+              orientation === "left" ? (
+                <ChevronLeft className={className} />
+              ) : (
+                <ChevronRight className={className} />
+              ),
+          }}
+          classNames={{
+            months: "flex h-full w-full flex-col gap-3",
+            month: "flex h-full w-full flex-col gap-3 justify-center",
+            month_caption: "hidden",
+            caption_label: `
+              mt-0 text-base font-semibold
+              transition-colors duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]
+              ${safeTheme.text}
             `,
-        }}
-      />
+            nav: "hidden",
+            month_grid: "w-full table-fixed border-collapse",
+            weekdays: "w-full",
+            weekday: `
+              pb-1 text-center text-[12px] font-medium
+              transition-colors duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]
+              ${safeTheme.calendarWeekday}
+            `,
+            weeks: "w-full",
+            week: "w-full",
+            today: `${safeTheme.calendarToday}`,
+            outside: "opacity-30",
+            disabled: "opacity-30",
+            selected: isDark ? "" : `${safeTheme.calendarSelected}`,
+            day: `
+              p-0 text-center align-middle
+              h-[2.75rem] w-[2.75rem] md:h-[3rem] md:w-[3rem]
+            `,
+
+            // 여기 핵심
+            // 선택된 날짜도 스크롤을 덜 막도록:
+            // - touch-action: pan-y
+            // - active scale 제거
+            // - tap highlight 제거
+            // - transform 애니메이션 제거
+            day_button: isDark
+              ? `
+                mx-auto inline-flex items-center justify-center rounded-full
+                h-[2.35rem] w-[2.35rem] md:h-[2.6rem] md:w-[2.6rem]
+                cursor-pointer text-white outline-none border-none ring-0
+                select-none [touch-action:pan-y] [webkit-tap-highlight-color:transparent]
+                transition-[background,color,opacity] duration-300
+                ease-[cubic-bezier(0.22,1,0.36,1)]
+                ${safeTheme.calendarSelectedButton}
+              `
+              : `
+                mx-auto inline-flex items-center justify-center rounded-full
+                h-[2.35rem] w-[2.35rem] md:h-[2.6rem] md:w-[2.6rem]
+                cursor-pointer text-stone-900 outline-none border-none ring-0
+                select-none [touch-action:pan-y] [webkit-tap-highlight-color:transparent]
+                transition-[background,color,opacity] duration-300
+                ease-[cubic-bezier(0.22,1,0.36,1)]
+                ${safeTheme.calendarSelectedButton}
+              `,
+          }}
+        />
+      </div>
     </section>
   )
 }
