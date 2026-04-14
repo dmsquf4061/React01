@@ -17,13 +17,16 @@ export default function ColorSection({
           ? "linear-gradient(rgb(0 0 0 / 30%) 0%, rgb(0 0 0 / 10%) 100%)"
           : "linear-gradient(180deg, rgba(255,255,255,0.30) 0%, rgba(255,255,255,0.10) 100%)",
 
-        backdropFilter: "blur(32px)", // 블러 효과
+        // 블러 효과
+        backdropFilter: "blur(32px)",
         WebkitBackdropFilter: "blur(32px)",
 
+        // 테두리
         border: isDark
           ? "1px solid rgb(0 0 0 / 28%)"
           : "1px solid rgba(255,255,255,0.28)",
 
+        // 그림자
         boxShadow: isDark
           ? "inset 0 1px 0 rgb(0 0 0 / 35%), 0px 10px 30px rgb(0 0 0 / 10%)"
           : "inset 0 1px 0 rgba(255,255,255,0.35), 0 4px 10px rgba(0,0,0,0.10)",
@@ -35,37 +38,46 @@ export default function ColorSection({
       </p>
 
       {/* 컬러 버튼 리스트 */}
-      <div className="flex flex-wrap gap-2 h-full lg:h-auto items-center justify-center lg:justify-start">
-        {colorThemes.map((t) => (
-          <button
-            key={t.id} // 고유 키
-            type="button"
-            onClick={() => !isDark && onThemeChange(t)} // 다크모드일 때 클릭 비활성
-            aria-label={t.id}
-            className={`
-              h-8 w-8 shrink-0 rounded-full transition-transform
-              ${isDark
-                ? "opacity-40 cursor-not-allowed"
-                : "cursor-pointer hover:scale-110"}
-            `}
-            style={{
-              background: t.swatch, // 컬러 표시
-              border: t.swatchBorder ? "0.5px solid #ccc" : "none",
+      <div className="flex flex-wrap gap-3 h-full lg:h-auto items-center justify-center lg:justify-start">
+        {colorThemes.map((t) => {
+          const isSelected = selectedTheme?.id === t.id
 
-              // 선택된 컬러 강조
-              outline:
-                selectedTheme.id === t.id
+          // 다크모드일 때 stone/black 계열은 흰색으로 보여서 가시성 확보
+          const buttonBg =
+            isDark && (t.id === "stone" || t.id === "black" || t.swatch === "#363636")
+              ? "#ffffff"
+              : t.swatch
+
+          return (
+            <button
+              key={t.id}
+              type="button"
+              onClick={() => onThemeChange?.(t)}
+              aria-label={t.id}
+              aria-pressed={isSelected}
+              className="
+                h-8 w-8 shrink-0 rounded-full cursor-pointer transition-transform
+                hover:scale-110
+              "
+              style={{
+                background: buttonBg,
+                border:
+                  t.swatchBorder || (isDark && buttonBg === "#ffffff")
+                    ? "0.5px solid rgba(255,255,255,0.35)"
+                    : "none",
+
+                outline: isSelected
                   ? `2px solid ${isDark ? "#fff" : "#5b5b5b"}`
-                  : "1px solid rgba(255, 255, 255, 0.2)",
+                  : isDark
+                    ? "1px solid rgba(255,255,255,0.2)"
+                    : "1px solid rgba(255,255,255,0.2)",
 
-              // 선택 시 외곽선 간격
-              outlineOffset:
-                selectedTheme.id === t.id
-                  ? "2px"
-                  : "0px",
-            }}
-          />
-        ))}
+                outlineOffset: isSelected ? "2px" : "0px",
+                WebkitTapHighlightColor: "transparent",
+              }}
+            />
+          )
+        })}
       </div>
     </section>
   )

@@ -339,10 +339,44 @@ export default function Landing() {
   // 다음곡/이전곡 눌렀을 때 이전 재생 상태 기억
   const shouldResumeAfterLoadRef = useRef(false)
 
-  // 현재 적용할 테마
-  const theme = isDarkMode ? DARK_THEME : selectedTheme
-  // 다크모드 별칭
+  // 다크모드 여부
   const isDark = isDarkMode
+
+  // 다크모드에서 stone(검정 계열)만 텍스트를 흰색으로 예외 처리
+  const isDarkStoneTheme =
+    isDark &&
+    (selectedTheme.id === "stone" ||
+      selectedTheme.id === "black" ||
+      selectedTheme.swatch === "#363636")
+
+  // 현재 적용할 테마
+  // - stone 테마 + 다크모드: 텍스트를 흰색으로 처리
+  // - 나머지 컬러 테마: 선택한 컬러 테마의 텍스트 색을 그대로 사용
+  const theme = {
+    ...selectedTheme,
+
+    text: isDarkStoneTheme ? "text-white" : selectedTheme.text,
+    subtext: isDarkStoneTheme ? "text-white/60" : selectedTheme.subtext,
+
+    calendarCaption: isDarkStoneTheme
+      ? "text-white"
+      : selectedTheme.calendarCaption,
+
+    calendarWeekday: isDarkStoneTheme
+      ? "text-white/50"
+      : selectedTheme.calendarWeekday,
+
+    castingTitle: isDarkStoneTheme
+      ? "text-white"
+      : selectedTheme.castingTitle,
+
+    castingSubtitle: isDarkStoneTheme
+      ? "text-white/70"
+      : selectedTheme.castingSubtitle,
+
+    gnbText: isDarkStoneTheme ? "text-white" : selectedTheme.gnbText,
+  }
+
   // 패널 배경 클래스
   const panelBg = isDark ? "bg-black/30" : "bg-white/0"
   // 섹션 배경 클래스
@@ -558,7 +592,7 @@ export default function Landing() {
 
   // 테마 변경
   const handleThemeChange = (nextTheme) => {
-    if (!nextTheme || nextTheme.id === "white") return
+    if (!nextTheme) return
     setSelectedTheme(nextTheme)
   }
 
