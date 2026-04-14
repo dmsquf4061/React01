@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { Calendar } from "@/components/ui/calendar"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 
@@ -27,12 +27,67 @@ export default function CalendarSection({ date, onDateChange, theme, isDark }) {
   // 현재 캘린더에 보여줄 월 상태
   const [currentMonth, setCurrentMonth] = useState(startOfMonth(date || today))
 
+  // 캘린더 래퍼 ref
+  const calendarWrapRef = useRef(null)
+
   // 선택 날짜가 바뀌면 표시 월도 같이 맞춤
   useEffect(() => {
     if (date) {
       setCurrentMonth(startOfMonth(date))
     }
   }, [date])
+
+  // 모바일에서 날짜 선택 후 포커스가 남아서 스크롤을 막는 현상 방지
+  useEffect(() => {
+    const wrap = calendarWrapRef.current
+    if (!wrap) return
+
+    let startY = 0
+    let moved = false
+
+    const blurIfCalendarButtonFocused = () => {
+      const active = document.activeElement
+      if (!(active instanceof HTMLElement)) return
+      if (!wrap.contains(active)) return
+
+      // 캘린더 내부 button에 포커스가 남아 있으면 해제
+      if (active.tagName === "BUTTON") {
+        active.blur()
+      }
+    }
+
+    const handleTouchStart = (e) => {
+      startY = e.touches[0]?.clientY ?? 0
+      moved = false
+    }
+
+    const handleTouchMove = (e) => {
+      const currentY = e.touches[0]?.clientY ?? 0
+
+      // 스크롤 의도로 보일 정도로 움직이면 포커스 해제
+      if (Math.abs(currentY - startY) > 6) {
+        moved = true
+        blurIfCalendarButtonFocused()
+      }
+    }
+
+    const handleTouchEnd = () => {
+      // 드래그가 끝난 뒤에도 포커스가 남아 있으면 한 번 더 정리
+      if (moved) {
+        blurIfCalendarButtonFocused()
+      }
+    }
+
+    wrap.addEventListener("touchstart", handleTouchStart, { passive: true })
+    wrap.addEventListener("touchmove", handleTouchMove, { passive: true })
+    wrap.addEventListener("touchend", handleTouchEnd, { passive: true })
+
+    return () => {
+      wrap.removeEventListener("touchstart", handleTouchStart)
+      wrap.removeEventListener("touchmove", handleTouchMove)
+      wrap.removeEventListener("touchend", handleTouchEnd)
+    }
+  }, [])
 
   // theme 값이 없을 때를 대비한 기본 테마값
   const safeTheme = useMemo(
@@ -96,6 +151,12 @@ export default function CalendarSection({ date, onDateChange, theme, isDark }) {
     const now = new Date()
     setCurrentMonth(startOfMonth(now))
     onDateChange(now)
+
+    // 오늘 버튼 클릭 후 포커스 제거
+    requestAnimationFrame(() => {
+      const active = document.activeElement
+      if (active instanceof HTMLElement) active.blur()
+    })
   }
 
   return (
@@ -107,7 +168,6 @@ export default function CalendarSection({ date, onDateChange, theme, isDark }) {
         ease-[cubic-bezier(0.22,1,0.36,1)]
       "
       style={{
-        // 다크/라이트 배경 스타일
         background: isDark
           ? "linear-gradient(180deg, rgba(0,0,0,0.30) 0%, rgba(0,0,0,0.10) 100%)"
           : "linear-gradient(180deg, rgba(255,255,255,0.30) 0%, rgba(255,255,255,0.10) 100%)",
@@ -126,7 +186,6 @@ export default function CalendarSection({ date, onDateChange, theme, isDark }) {
       {/* 상단 헤더 */}
       <div className="mb-3 flex items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-3">
-          {/* 현재 월 라벨 */}
           <p
             className={`
               shrink-0 text-base font-semibold lg:text-lg
@@ -137,7 +196,6 @@ export default function CalendarSection({ date, onDateChange, theme, isDark }) {
             {monthLabel}
           </p>
 
-          {/* 현재 월이 아닐 때만 오늘 버튼 노출 */}
           {!isCurrentMonthView && (
             <button
               type="button"
@@ -170,7 +228,6 @@ export default function CalendarSection({ date, onDateChange, theme, isDark }) {
           )}
         </div>
 
-        {/* 월 이동 버튼 */}
         <div className="flex shrink-0 items-center gap-2">
           <button
             type="button"
@@ -250,10 +307,11 @@ export default function CalendarSection({ date, onDateChange, theme, isDark }) {
 
       {/* 캘린더 본문 */}
       <div
+        ref={calendarWrapRef}
         className="h-[calc(100%-55px)] w-full"
         style={{
-          // 캘린더 내부에서 터치 시작 후 세로 스크롤이 자연스럽게 부모로 넘어가도록
           touchAction: "pan-y",
+          WebkitTapHighlightColor: "transparent",
         }}
       >
         <Calendar
@@ -263,6 +321,17 @@ export default function CalendarSection({ date, onDateChange, theme, isDark }) {
           selected={date}
           onSelect={(d) => {
             onDateChange(d || date)
+
+            // 날짜 선택 직후 버튼 포커스 해제
+            requestAnimationFrame(() => {
+              const active = document.activeElement
+              if (
+                active instanceof HTMLElement &&
+                calendarWrapRef.current?.contains(active)
+              ) {
+                active.blur()
+              }
+            })
           }}
           endMonth={todayMonth}
           hideNavigation
@@ -307,13 +376,6 @@ export default function CalendarSection({ date, onDateChange, theme, isDark }) {
               p-0 text-center align-middle
               h-[2.75rem] w-[2.75rem] md:h-[3rem] md:w-[3rem]
             `,
-
-            // 여기 핵심
-            // 선택된 날짜도 스크롤을 덜 막도록:
-            // - touch-action: pan-y
-            // - active scale 제거
-            // - tap highlight 제거
-            // - transform 애니메이션 제거
             day_button: isDark
               ? `
                 mx-auto inline-flex items-center justify-center rounded-full
