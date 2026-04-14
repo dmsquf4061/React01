@@ -93,7 +93,7 @@ export default function LoadingIntro({ onComplete }) {
         <div className="flex flex-col items-center">
           {/* 숫자 카운트 표시 */}
           <p
-            className="text-8xl font-black md:text-[120px]"
+            className="w-[255px] text-center text-8xl font-black tabular-nums md:text-[120px] flex"
           >
             {String(count).padStart(3, "0")}
           </p>
