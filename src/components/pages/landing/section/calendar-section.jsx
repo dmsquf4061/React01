@@ -205,7 +205,7 @@ export default function CalendarSection({ date, onDateChange, theme, isDark }) {
                 relative overflow-hidden whitespace-nowrap
                 [transform:translateZ(0)] [backface-visibility:hidden]
                 [isolation:isolate] [contain:paint]
-                transition-[background,border-color,box-shadow,color,opacity] duration-500
+                transition-[background,border-color,box-shadow,color] duration-500
                 ease-[cubic-bezier(0.22,1,0.36,1)]
                 ${safeTheme.text}
                 ${
@@ -213,11 +213,6 @@ export default function CalendarSection({ date, onDateChange, theme, isDark }) {
                     ? "bg-[linear-gradient(180deg,rgba(255,255,255,0.10)_0%,rgba(255,255,255,0.06)_100%)] border border-white/15 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_4px_6px_rgba(0,0,0,0.18)]"
                     : "bg-[linear-gradient(180deg,rgba(255,255,255,0.30)_0%,rgba(255,255,255,0.10)_100%)] border border-white/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_4px_6px_rgba(0,0,0,0.10)]"
                 }
-                before:pointer-events-none before:absolute before:inset-0 before:rounded-full
-                before:opacity-0 before:transition-opacity before:duration-200
-                before:ease-[cubic-bezier(0.22,1,0.36,1)]
-                ${isDark ? "before:bg-white/10" : "before:bg-white/20"}
-                hover:before:opacity-100
               `}
               style={{
                 WebkitTapHighlightColor: "transparent",
@@ -238,18 +233,13 @@ export default function CalendarSection({ date, onDateChange, theme, isDark }) {
               relative overflow-hidden
               [transform:translateZ(0)] [backface-visibility:hidden]
               [isolation:isolate] [contain:paint]
-              transition-[background,border-color,box-shadow,opacity] duration-500
+              transition-[background,border-color,box-shadow] duration-500
               ease-[cubic-bezier(0.22,1,0.36,1)]
               ${
                 isDark
                   ? "bg-[linear-gradient(180deg,rgba(255,255,255,0.10)_0%,rgba(255,255,255,0.06)_100%)] border border-white/15 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_4px_6px_rgba(0,0,0,0.18)]"
                   : "bg-[linear-gradient(180deg,rgba(255,255,255,0.30)_0%,rgba(255,255,255,0.10)_100%)] border border-white/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_4px_6px_rgba(0,0,0,0.10)]"
               }
-              before:pointer-events-none before:absolute before:inset-0 before:rounded-full
-              before:opacity-0 before:transition-opacity before:duration-200
-              before:ease-[cubic-bezier(0.22,1,0.36,1)]
-              ${isDark ? "before:bg-white/10" : "before:bg-white/20"}
-              hover:before:opacity-100
             `}
             style={{
               WebkitTapHighlightColor: "transparent",
@@ -283,11 +273,6 @@ export default function CalendarSection({ date, onDateChange, theme, isDark }) {
                   : "bg-[linear-gradient(180deg,rgba(255,255,255,0.30)_0%,rgba(255,255,255,0.10)_100%)] border border-white/30 shadow-[inset_0_1px_0_rgba(255,255,255,0.35),0_4px_6px_rgba(0,0,0,0.10)]"
               }
               ${isCurrentMonthView ? "cursor-not-allowed opacity-40" : "cursor-pointer"}
-              before:pointer-events-none before:absolute before:inset-0 before:rounded-full
-              before:opacity-0 before:transition-opacity before:duration-200
-              before:ease-[cubic-bezier(0.22,1,0.36,1)]
-              ${isDark ? "before:bg-white/10" : "before:bg-white/20"}
-              hover:before:opacity-100
             `}
             style={{
               WebkitTapHighlightColor: "transparent",
