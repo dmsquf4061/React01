@@ -336,6 +336,8 @@ export default function Landing() {
   const fileInputRef = useRef(null)
   // audio ref
   const audioRef = useRef(null)
+  // 다음곡/이전곡 눌렀을 때 이전 재생 상태 기억
+  const shouldResumeAfterLoadRef = useRef(false)
 
   // 현재 적용할 테마
   const theme = isDarkMode ? DARK_THEME : selectedTheme
@@ -391,7 +393,6 @@ export default function Landing() {
       }
     }
 
-    // supabase 메모 조회
     const fetchMemo = async () => {
       const { data, error } = await supabase
         .from("memo")
@@ -656,11 +657,23 @@ export default function Landing() {
 
   // 이전 곡 이동
   const handlePrevTrack = () => {
+    const audio = audioRef.current
+    const wasPlaying = audio && !audio.paused
+
+    // 곡 바꾸기 전에 이전 재생 상태 저장
+    shouldResumeAfterLoadRef.current = wasPlaying
+
     setCurrentTrackIndex((prev) => (prev - 1 + MUSIC_TRACKS.length) % MUSIC_TRACKS.length)
   }
 
   // 다음 곡 이동
   const handleNextTrack = () => {
+    const audio = audioRef.current
+    const wasPlaying = audio && !audio.paused
+
+    // 곡 바꾸기 전에 이전 재생 상태 저장
+    shouldResumeAfterLoadRef.current = wasPlaying
+
     setCurrentTrackIndex((prev) => (prev + 1) % MUSIC_TRACKS.length)
   }
 
@@ -707,7 +720,6 @@ export default function Landing() {
 
   return (
     <>
-      {/* 랜딩 본문 */}
       <div
         style={{
           opacity: landingVisible ? 1 : 0,
@@ -715,7 +727,6 @@ export default function Landing() {
           pointerEvents: landingVisible ? "auto" : "none",
         }}
       >
-        {/* 배경 영역 */}
         <div
           className="h-screen bg-cover bg-center lg:p-0 xl:p-6"
           style={{
@@ -728,7 +739,6 @@ export default function Landing() {
               : "inset 0 1px 0 rgba(255,255,255,0.35), 0 10px 30px rgba(0,0,0,0.10)",
           }}
         >
-          {/* 내부 레이아웃 */}
           <div
             className="flex h-full w-full flex-col gap-4 overflow-y-auto p-4 lg:min-h-[868px] lg:min-w-[1290px] lg:flex-row lg:gap-4 lg:overflow-hidden lg:rounded-[0px] lg:p-4 xl:rounded-[40px] transition-[background,border-color,box-shadow] duration-500"
             style={{
@@ -744,14 +754,12 @@ export default function Landing() {
                 : "inset 0 1px 0 rgb(255 255 255 / 8%), inset 0 -1px 0 rgba(255,255,255,0.1), 0 1px 3px rgba(0,0,0,0.12)",
             }}
           >
-            {/* 좌측 GNB */}
             <Gnb
               theme={theme}
               isDark={isDark}
               onToggleLightDark={handleToggleLightDark}
             />
 
-            {/* 메인 섹션 */}
             <MainSection
               mainImage={mainImage}
               clip={clip}
@@ -767,10 +775,8 @@ export default function Landing() {
               }}
             />
 
-            {/* 우측 사이드 패널 */}
             <aside className="w-full lg:w-[400px] lg:min-h-[820px] lg:shrink-0 lg:overflow-y-auto no-scrollbar">
               <div className="grid h-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-1">
-                {/* 이미지 섹션 */}
                 <ImageSection
                   castingItems={castingItems}
                   mainImage={mainImage}
@@ -785,7 +791,6 @@ export default function Landing() {
                   isDark={isDark}
                 />
 
-                {/* 북 섹션 */}
                 <BookSection
                   theme={theme}
                   panelBg={panelBg}
@@ -793,7 +798,6 @@ export default function Landing() {
                   onBookOpen={handleBookOpen}
                 />
 
-                {/* 컬러 섹션 */}
                 <ColorSection
                   colorThemes={COLOR_THEMES}
                   selectedTheme={selectedTheme}
@@ -803,7 +807,6 @@ export default function Landing() {
                   onThemeChange={handleThemeChange}
                 />
 
-                {/* 음악 섹션 */}
                 <MusicSection
                   currentTrack={MUSIC_TRACKS[currentTrackIndex]}
                   currentTrackIndex={currentTrackIndex}
@@ -821,14 +824,17 @@ export default function Landing() {
                   onVolumeChange={handleVolumeChange}
                   audioRef={audioRef}
                   onLoadedMetadata={async (e) => {
+                    // 새 곡 길이 설정
                     setDuration(e.currentTarget.duration || 0)
+                    // 진행 시간 초기화
                     setCurrentTime(0)
 
+                    // 이전 곡이 재생 중이었다면 새 곡도 자동 재생
                     if (shouldResumeAfterLoadRef.current) {
+                      // 한 번 재생 후 즉시 초기화해서 중복 재생 방지
                       shouldResumeAfterLoadRef.current = false
 
                       try {
-                        await ensureAudioGraph()
                         await e.currentTarget.play()
                       } catch (error) {
                         console.warn("track auto play warning:", error)
@@ -842,6 +848,7 @@ export default function Landing() {
                   onPause={() => setIsPlaying(false)}
                   onTrackEnd={() => {
                     setIsPlaying(false)
+                    // 곡이 자연스럽게 끝났을 때는 다음 곡 자동 재생
                     shouldResumeAfterLoadRef.current = true
                     setCurrentTrackIndex((prev) => (prev + 1) % MUSIC_TRACKS.length)
                   }}
@@ -852,7 +859,6 @@ export default function Landing() {
           </div>
         </div>
 
-        {/* 메모 모달 */}
         {memoOpen && (
           <MemoModal
             memo={memo}
@@ -863,7 +869,6 @@ export default function Landing() {
           />
         )}
 
-        {/* 북 모달 */}
         {selectedBook && (
           <BookModal
             item={selectedBook}
@@ -874,7 +879,6 @@ export default function Landing() {
         )}
       </div>
 
-      {/* 인트로 */}
       {!introGone && (
         <LoadingIntro onComplete={handleIntroComplete} />
       )}

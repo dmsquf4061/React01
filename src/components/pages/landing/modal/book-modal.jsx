@@ -58,7 +58,7 @@ export default function BookModal({ item, onClose, theme, isDark }) {
           `}
         >
           {/* 이미지 영역 */}
-          <div className="relative h-[320px] overflow-auto">
+          <div className="relative h-[320px] lg:h-full overflow-auto">
             <img
               src={item.src}
               alt={item.title}

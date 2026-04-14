@@ -120,6 +120,10 @@ export default function CalendarSection({ date, onDateChange, theme, isDark }) {
           ? "inset 0 1px 0 rgba(0,0,0,0.35), 0 10px 30px rgba(0,0,0,0.10)"
           : "inset 0 1px 0 rgba(255,255,255,0.35), 0 4px 10px rgba(0,0,0,0.10)",
         transition: `background 500ms ${EASE}, border-color 500ms ${EASE}, box-shadow 500ms ${EASE}, color 320ms ${EASE}`,
+
+        // 모바일에서 세로 스크롤 우선 처리
+        touchAction: "pan-y",
+        WebkitTapHighlightColor: "transparent",
       }}
     >
       {/* 상단 헤더 */}
@@ -160,6 +164,10 @@ export default function CalendarSection({ date, onDateChange, theme, isDark }) {
                 ${isDark ? "before:bg-white/10" : "before:bg-white/20"}
                 hover:before:opacity-100
               `}
+              style={{
+                WebkitTapHighlightColor: "transparent",
+                touchAction: "pan-y",
+              }}
             >
               <span className="relative z-10">오늘</span>
             </button>
@@ -190,6 +198,10 @@ export default function CalendarSection({ date, onDateChange, theme, isDark }) {
               ${isDark ? "before:bg-white/10" : "before:bg-white/20"}
               hover:before:opacity-100
             `}
+            style={{
+              WebkitTapHighlightColor: "transparent",
+              touchAction: "pan-y",
+            }}
           >
             {/* 이전 달 아이콘 */}
             <ChevronLeft
@@ -226,6 +238,10 @@ export default function CalendarSection({ date, onDateChange, theme, isDark }) {
               ${isDark ? "before:bg-white/10" : "before:bg-white/20"}
               hover:before:opacity-100
             `}
+            style={{
+              WebkitTapHighlightColor: "transparent",
+              touchAction: "pan-y",
+            }}
           >
             {/* 다음 달 아이콘 */}
             <ChevronRight
@@ -290,28 +306,29 @@ export default function CalendarSection({ date, onDateChange, theme, isDark }) {
           disabled: "opacity-30",
           selected: isDark ? "" : `${safeTheme.calendarSelected}`,
           day: `
-            p-0 text-center align-middle
+            p-0 text-center align-middle select-none
             h-[2.75rem] w-[2.75rem] md:h-[3rem] md:w-[3rem]
           `,
+
+          // 모바일에서 날짜 버튼이 세로 스크롤을 덜 막도록 수정
+          // active scale 제거 / 세로 스크롤 우선권 부여
           day_button: isDark
             ? `
               mx-auto inline-flex items-center justify-center rounded-full
               h-[2.35rem] w-[2.35rem] md:h-[2.6rem] md:w-[2.6rem]
               cursor-pointer text-white outline-none border-none ring-0
-              touch-manipulation select-none
-              transition-[background,color,transform,opacity] duration-300
+              select-none
+              transition-[background,color,opacity] duration-300
               ease-[cubic-bezier(0.22,1,0.36,1)]
-              active:scale-95 active:opacity-80
               ${safeTheme.calendarSelectedButton}
             `
             : `
               mx-auto inline-flex items-center justify-center rounded-full
               h-[2.35rem] w-[2.35rem] md:h-[2.6rem] md:w-[2.6rem]
               cursor-pointer text-stone-900 outline-none border-none ring-0
-              touch-manipulation select-none
-              transition-[background,color,transform,opacity] duration-300
+              select-none
+              transition-[background,color,opacity] duration-300
               ease-[cubic-bezier(0.22,1,0.36,1)]
-              active:scale-95
               ${safeTheme.calendarSelectedButton}
             `,
         }}
