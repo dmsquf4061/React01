@@ -52,13 +52,13 @@ export default function BookModal({ item, onClose, theme, isDark }) {
         {/* 본문 영역 */}
         <div
           className={`
-            grid grid-cols-1 gap-0 overflow-hidden
-            md:grid-cols-[1.1fr_0.9fr]
+            grid grid-cols-1 gap-0 overflow-auto
+            md:grid-cols-[1.1fr_0.9fr] h-[500px]
             ${isDark ? "bg-black" : "bg-white"}
           `}
         >
           {/* 이미지 영역 */}
-          <div className="relative h-[320px] overflow-hidden md:h-[500px]">
+          <div className="relative h-[320px] overflow-auto">
             <img
               src={item.src}
               alt={item.title}

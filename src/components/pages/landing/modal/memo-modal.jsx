@@ -93,6 +93,7 @@ export default function MemoModal({ memo, onSave, onClose, theme, isDark }) {
               backgroundPositionY: "8px",
               backgroundAttachment: "local",
               backgroundColor: "transparent",
+              WebkitTapHighlightColor: "transparent",
             }}
             placeholder="메모를 입력하세요..."
           />
