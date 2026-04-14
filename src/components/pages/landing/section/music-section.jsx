@@ -85,6 +85,9 @@ export default function MusicSection({
   // 볼륨 퍼센트
   const volumePercent = Math.max(0, Math.min(100, volume * 100))
 
+  // 다크모드일 때 남은 트랙 색상
+  const trackRestColor = isDark ? "rgba(255,255,255,0.25)" : "#ffffff"
+
   // 재생 위치 변경
   const handleSeekChange = (e) => {
     onSeek?.(e)
@@ -158,10 +161,12 @@ export default function MusicSection({
             onInput={handleSeekChange}
             className="music-range h-2 w-full cursor-pointer appearance-none rounded-full"
             style={{
-              background: `linear-gradient(to right, ${theme.swatch} 0%, ${theme.swatch} ${progressPercent}%, #fff ${progressPercent}%, #fff 100%)`,
-              ["--range-thumb-color"]: theme.swatch,
               WebkitTapHighlightColor: "transparent",
               touchAction: "pan-x",
+              ["--range-progress-percent"]: `${progressPercent}%`,
+              ["--range-progress-color"]: theme.swatch,
+              ["--range-rest-color"]: trackRestColor,
+              ["--range-thumb-color"]: "#ffffff",
             }}
             aria-label="track progress"
           />
@@ -216,10 +221,12 @@ export default function MusicSection({
               onInput={handleVolumeInput}
               className="music-range h-2 w-20 cursor-pointer appearance-none rounded-full sm:w-24 md:w-28"
               style={{
-                background: `linear-gradient(to right, ${theme.swatch} 0%, ${theme.swatch} ${volumePercent}%, #fff ${volumePercent}%, #fff 100%)`,
-                ["--range-thumb-color"]: theme.swatch,
                 WebkitTapHighlightColor: "transparent",
                 touchAction: "pan-x",
+                ["--range-progress-percent"]: `${volumePercent}%`,
+                ["--range-progress-color"]: theme.swatch,
+                ["--range-rest-color"]: trackRestColor,
+                ["--range-thumb-color"]: "#ffffff",
               }}
               aria-label="volume"
             />

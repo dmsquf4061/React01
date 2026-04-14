@@ -322,3 +322,63 @@ code {
   -ms-overflow-style: none;  /* IE, Edge */
   scrollbar-width: none;     /* Firefox */
 }
+
+.music-range {
+  -webkit-appearance: none;
+  appearance: none;
+  background: transparent;
+}
+
+.music-range:focus {
+  outline: none;
+}
+
+/* WebKit track */
+.music-range::-webkit-slider-runnable-track {
+  height: 10px;
+  border-radius: 9999px;
+  background: linear-gradient(
+    to right,
+    var(--range-progress-color) 0%,
+    var(--range-progress-color) var(--range-progress-percent),
+    var(--range-rest-color) var(--range-progress-percent),
+    var(--range-rest-color) 100%
+  );
+}
+
+/* WebKit thumb */
+.music-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 9999px;
+  background: var(--range-thumb-color);
+  border: none;
+  margin-top: -4px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.22);
+}
+
+/* Firefox track */
+.music-range::-moz-range-track {
+  height: 10px;
+  border-radius: 9999px;
+  background: var(--range-rest-color);
+}
+
+/* Firefox progress */
+.music-range::-moz-range-progress {
+  height: 10px;
+  border-radius: 9999px;
+  background: var(--range-progress-color);
+}
+
+/* Firefox thumb */
+.music-range::-moz-range-thumb {
+  width: 15px;
+  height: 15px;
+  border-radius: 9999px;
+  background: var(--range-thumb-color);
+  border: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.22);
+}
