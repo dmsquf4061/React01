@@ -83,7 +83,7 @@ function ToggleButton({ isDark, onToggle }) {
       }}
     >
       {/* 모바일 토글 */}
-      <div className="relative h-10 w-[80px] overflow-hidden rounded-full border border-black/10 lg:hidden">
+      <div className="relative h-10 w-[74px] lg:w-[80px] overflow-hidden rounded-full border border-black/10 lg:hidden">
         <div className="absolute left-[14px] top-1/2 flex -translate-y-1/2 items-center justify-center">
           <Sun size={16} className="text-white [transform:translateZ(0)]" />
         </div>
