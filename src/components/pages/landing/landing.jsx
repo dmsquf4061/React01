@@ -820,9 +820,20 @@ export default function Landing() {
                   onSeek={handleSeek}
                   onVolumeChange={handleVolumeChange}
                   audioRef={audioRef}
-                  onLoadedMetadata={(e) => {
+                  onLoadedMetadata={async (e) => {
                     setDuration(e.currentTarget.duration || 0)
                     setCurrentTime(0)
+
+                    if (shouldResumeAfterLoadRef.current) {
+                      shouldResumeAfterLoadRef.current = false
+
+                      try {
+                        await ensureAudioGraph()
+                        await e.currentTarget.play()
+                      } catch (error) {
+                        console.warn("track auto play warning:", error)
+                      }
+                    }
                   }}
                   onTimeUpdate={(e) => {
                     setCurrentTime(e.currentTarget.currentTime || 0)
@@ -831,6 +842,7 @@ export default function Landing() {
                   onPause={() => setIsPlaying(false)}
                   onTrackEnd={() => {
                     setIsPlaying(false)
+                    shouldResumeAfterLoadRef.current = true
                     setCurrentTrackIndex((prev) => (prev + 1) % MUSIC_TRACKS.length)
                   }}
                   isDark={isDark}
