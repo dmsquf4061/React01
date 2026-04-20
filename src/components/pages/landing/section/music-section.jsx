@@ -1,13 +1,6 @@
 import { memo } from "react"
 import { SkipBack, SkipForward, Play, Pause, Volume2, VolumeX } from "lucide-react"
-
-// 초 단위 시간을 mm:ss 형식으로 변환
-function formatTime(time) {
-  if (!Number.isFinite(time)) return "0:00"
-  const minutes = Math.floor(time / 60)
-  const seconds = Math.floor(time % 60)
-  return `${minutes}:${String(seconds).padStart(2, "0")}`
-}
+import { formatTime } from "@/utils/format"
 
 // 공통 원형 플레이어 버튼
 const PlayerRoundButton = memo(function PlayerRoundButton({

@@ -156,7 +156,7 @@ export default function ImageSection({
                       aria-hidden="true"
                       className="pointer-events-none absolute inset-0 rounded-full bg-white/0 opacity-0 transition-opacity duration-150 hover:opacity-100"
                     />
-                    <X size={10} strokeWidth={2.5} className="relative z-10" />
+                    <X size={10} strokeWidth={2.5} className="relative z-10 cursor-pointer" />
                   </button>
                 </div>
               )

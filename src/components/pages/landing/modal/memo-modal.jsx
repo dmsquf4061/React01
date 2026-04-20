@@ -1,95 +1,152 @@
-import { useState } from "react"
+import { useState, useRef, useEffect } from "react"
 import { X } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import gsap from "gsap"
 
-// 메모 입력 모달 컴포넌트
 export default function MemoModal({ memo, onSave, onClose, theme, isDark }) {
-  // 메모 입력 상태 (초기값: 기존 메모)
   const [draft, setDraft] = useState(memo ?? "")
-  // 저장 중 상태 (버튼 비활성화 용도)
   const [saving, setSaving] = useState(false)
+  const [isClosing, setIsClosing] = useState(false)
 
-  // 저장 버튼 클릭 시 실행
+  const overlayRef = useRef(null)
+  const modalRef = useRef(null)
+
+  // 등장 애니메이션
+  useEffect(() => {
+    const tl = gsap.timeline()
+
+    tl.fromTo(
+      overlayRef.current,
+      { opacity: 0 },
+      { opacity: 1, duration: 0.3, ease: "power2.out" }
+    )
+
+    tl.fromTo(
+      modalRef.current,
+      {
+        y: 60,
+        scale: 0.95,
+        opacity: 0,
+      },
+      {
+        y: 0,
+        scale: 1,
+        opacity: 1,
+        duration: 0.5,
+        ease: "power3.out",
+      },
+      "<"
+    )
+
+    return () => {
+      tl.kill()
+    }
+  }, [])
+
+  // 닫기 애니메이션
+  const handleClose = () => {
+    if (isClosing) return
+    setIsClosing(true)
+
+    const tl = gsap.timeline({
+      onComplete: onClose,
+    })
+
+    tl.to(modalRef.current, {
+      y: 40,
+      scale: 0.96,
+      opacity: 0,
+      duration: 0.35,
+      ease: "power2.in",
+    })
+
+    tl.to(
+      overlayRef.current,
+      {
+        opacity: 0,
+        duration: 0.25,
+        ease: "power2.in",
+      },
+      "<"
+    )
+  }
+
   const handleSave = async () => {
     try {
-      setSaving(true) // 저장 시작
-      await onSave(draft) // 부모에 저장 요청
-      onClose() // 저장 후 모달 닫기
+      setSaving(true)
+      await onSave(draft)
+      handleClose()
     } finally {
-      setSaving(false) // 저장 상태 해제
+      setSaving(false)
     }
   }
 
   return (
-    // 전체 화면 오버레이 (배경 클릭 시 닫힘)
     <div
+      ref={overlayRef}
       className="fixed inset-0 z-50 flex h-screen w-screen items-center justify-center p-4"
       style={{
-        background: "rgba(0,0,0,0.25)", // 반투명 배경
-        backdropFilter: "blur(4px)", // 블러 효과
+        background: "rgba(0,0,0,0.25)",
+        backdropFilter: "blur(4px)",
         WebkitBackdropFilter: "blur(4px)",
       }}
-      onClick={onClose} // 바깥 클릭 시 닫기
+      onClick={handleClose}
     >
-      {/* 모달 본체 */}
       <div
+        ref={modalRef}
         className={`
-          relative flex w-full max-w-[1000px] flex-col gap-2 overflow-hidden rounded-[10px] shadow-2xl py-4
-          ${isDark ? "bg-black" : "bg-white"} // 다크모드 대응
+          relative flex w-full max-w-[1000px] flex-col gap-2 overflow-hidden rounded-[10px] py-4 shadow-2xl
+          ${isDark ? "bg-black" : "bg-white"}
         `}
-        onClick={(e) => e.stopPropagation()} // 내부 클릭 시 닫힘 방지
+        onClick={(e) => e.stopPropagation()}
       >
-        {/* 상단 헤더 영역 */}
-        <div className="flex px-4 items-center justify-between">
-          <p className={`text-left text-xl ${theme.text}`}>PERSONAL NOTEBOOK</p>
+        {/* 헤더 */}
+        <div className="flex items-center justify-between px-4">
+          <p className={`text-xl ${theme.text}`}>PERSONAL NOTEBOOK</p>
 
-          {/* 닫기 버튼 */}
           <button
             type="button"
-            onClick={(e) => {
-              e.stopPropagation() // 이벤트 버블링 방지
-              onClose() // 모달 닫기
-            }}
+            onClick={handleClose}
             className={`
-              z-20 flex h-8 w-8 items-center justify-center rounded-full
-              transition cursor-pointer
-              ${isDark
-                ? "text-stone-400 hover:text-white"
-                : "text-stone-400 hover:text-stone-700"} // 다크/라이트 hover 색상
+              z-20 flex h-9 w-9 cursor-pointer items-center justify-center rounded-full transition
+              ${isDark ? "text-white/70 hover:text-white" : "text-stone-500 hover:text-stone-800"}
             `}
             style={{
-              WebkitTapHighlightColor: "transparent", // 모바일 클릭 하이라이트 제거
-              backdropFilter: "blur(8px)", // 버튼 블러
-              WebkitBackdropFilter: "blur(8px)",
-            }}
+        background: isDark
+          ? "rgba(255,255,255,0.10)"
+          : "rgba(255,255,255,0.22)",
+        border: isDark
+          ? "1px solid rgba(255,255,255,0.16)"
+          : "1px solid rgba(255,255,255,0.28)",
+        boxShadow: isDark
+          ? "inset 0 1px 0 rgba(255,255,255,0.06), 0 6px 16px rgba(0,0,0,0.14)"
+          : "inset 0 1px 0 rgba(255,255,255,0.30), 0 6px 16px rgba(0,0,0,0.08)",
+        WebkitTapHighlightColor: "transparent",
+      }}
             aria-label="닫기"
           >
             <X size={25} strokeWidth={1.5} />
           </button>
         </div>
 
-        {/* 텍스트 입력 영역 컨테이너 */}
+        {/* textarea 영역 */}
         <div
-          className={`
-            relative h-[480px] overflow-hidden
-            ${isDark ? "bg-black" : "bg-white"} // 배경색
-          `}
+          className={`relative h-[480px] overflow-hidden ${isDark ? "bg-black" : "bg-white"}`}
         >
-          {/* 메모 입력 textarea */}
           <textarea
-            autoFocus // 자동 포커스
-            value={draft} // 입력값 바인딩
-            onChange={(e) => setDraft(e.target.value)} // 입력 상태 업데이트
+            autoFocus
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
             rows={5}
             className={`
               h-full w-full resize-none bg-transparent px-4 py-2 text-sm leading-[30px] outline-none
               placeholder:text-stone-300
-              ${isDark ? "text-white/70" : "text-stone-600"} // 텍스트 색상
+              ${isDark ? "text-white/70" : "text-stone-600"}
             `}
             style={{
-              // 줄 노트 느낌 배경
-              backgroundImage:
-                "repeating-linear-gradient(#c4c4c400, #dadada00 29px, rgb(211 211 211 / 39%) 29px, rgb(245 245 245 / 10%) 30px)",
+              backgroundImage: isDark
+                ? "repeating-linear-gradient(rgba(255,255,255,0) 0px, rgba(255,255,255,0) 29px, rgba(255,255,255,0.14) 29px, rgba(255,255,255,0.04) 30px)"
+                : "repeating-linear-gradient(#c4c4c400, #dadada00 29px, rgb(211 211 211 / 39%) 29px, rgb(245 245 245 / 10%) 30px)",
               backgroundPositionY: "8px",
               backgroundAttachment: "local",
               backgroundColor: "transparent",
@@ -99,17 +156,15 @@ export default function MemoModal({ memo, onSave, onClose, theme, isDark }) {
           />
         </div>
 
-        {/* 하단 저장 버튼 영역 */}
+        {/* 버튼 */}
         <div className="flex justify-center px-4">
           <Button
             type="button"
-            onClick={handleSave} // 저장 실행
-            disabled={saving} // 저장 중 비활성화
-            className="cursor-pointer rounded-full bg-stone-400 px-4 py-2 text-[14px] w-[100px] text-white hover:bg-stone-500 disabled:opacity-50"
+            onClick={handleSave}
+            disabled={saving}
+            className="w-[100px] rounded-full bg-stone-400 text-white hover:bg-stone-500 disabled:opacity-50"
           >
-            저장
-            {/* 저장 상태 표시용 (필요 시 사용) */}
-            {/* {saving ? "저장 중..." : "저장"} */}
+            {saving ? "저장 중..." : "저장"}
           </Button>
         </div>
       </div>

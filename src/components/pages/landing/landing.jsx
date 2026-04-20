@@ -11,61 +11,43 @@ import ColorSection from "./section/color-section"
 import MusicSection from "./section/music-section"
 import BookSection from "./section/book-section"
 import { supabase } from "@/lib/supabase"
+import { lerp, dist } from "@/utils/math"
 
-// 메모 저장 키
 const MEMO_KEY = "landing_memo"
-// 메모 영역 크기
+const MEMO_DATE_KEY = "landing_memo_date"
+
 const MEMO_SIZE = 350
-// 캘린더 박스 가로 크기
 const CALENDAR_BOX_W = 380
-// 캘린더 박스 세로 크기
 const CALENDAR_BOX_H = 460
 
-// 선택 테마 저장 키
 const THEME_KEY = "landing_theme"
-// 다크모드 저장 키
 const THEME_MODE_KEY = "landing_theme_mode"
-// 메인 이미지 저장 키
 const MAIN_IMAGE_KEY = "landing_main_image"
-// 기본 이미지 초기화 여부 저장 키
 const CASTING_DEFAULTS_KEY = "landing_default_casting_initialized"
-// 음악 인덱스 저장 키
 const MUSIC_INDEX_KEY = "landing_music_index"
 
-// IndexedDB 이름
 const DB_NAME = "landing-image-db"
-// IndexedDB 버전
 const DB_VERSION = 1
-// object store 이름
 const STORE_NAME = "castingImages"
-// 최대 이미지 개수
 const MAX_CASTING_IMAGES = 8
 
-// 기본 경로
 const BASE = import.meta.env.BASE_URL
-// 공통 easing 값
 const EASE = "cubic-bezier(0.22, 1, 0.36, 1)"
-
-// 인트로 fade-out 지속시간
 const INTRO_FADE_DURATION = 1000
-// 랜딩 fade-in 지속시간
 const LANDING_FADE_DURATION = 1200
 
-// 기본 캐스팅 이미지 목록
 const DEFAULT_CASTING_ITEMS = [
   { id: "default-1", src: `${BASE}img/img10.jpg`, alt: "casting 1", isDefault: true },
   { id: "default-2", src: `${BASE}img/img11.jpg`, alt: "casting 2", isDefault: true },
   { id: "default-3", src: `${BASE}img/img12.jpg`, alt: "casting 3", isDefault: true },
 ]
 
-// 음악 트랙 목록
 const MUSIC_TRACKS = [
   { id: "track-1", title: "Daydream", artist: "웬디(WENDY)", src: "./music/wendy-daydream.mp3" },
   { id: "track-2", title: "One Summer Day", artist: "조 히사이시", src: "./music/조히사이시-OneSummerDay.mp3" },
   { id: "track-3", title: "Cold Blue", artist: "Astron", src: "./music/cold-blue.mp3" },
 ]
 
-// 테마 목록
 const THEMES = [
   {
     id: "stone",
@@ -73,6 +55,11 @@ const THEMES = [
     text: "text-stone-800",
     subtext: "text-stone-400",
     bg: "bg-stone-900/50",
+    gnbText: "text-stone-700",
+    calendarCaption: "text-stone-800",
+    calendarWeekday: "text-stone-500",
+    castingTitle: "text-stone-800",
+    castingSubtitle: "text-stone-500",
   },
   {
     id: "blue",
@@ -80,6 +67,11 @@ const THEMES = [
     text: "text-blue-900",
     subtext: "text-stone-400",
     bg: "bg-blue-900/50",
+    gnbText: "text-stone-700",
+    calendarCaption: "text-blue-900",
+    calendarWeekday: "text-stone-500",
+    castingTitle: "text-blue-900",
+    castingSubtitle: "text-stone-500",
   },
   {
     id: "green",
@@ -87,6 +79,11 @@ const THEMES = [
     text: "text-green-900",
     subtext: "text-stone-400",
     bg: "bg-green-900/50",
+    gnbText: "text-stone-700",
+    calendarCaption: "text-green-900",
+    calendarWeekday: "text-stone-500",
+    castingTitle: "text-green-900",
+    castingSubtitle: "text-stone-500",
   },
   {
     id: "pink",
@@ -94,6 +91,11 @@ const THEMES = [
     text: "text-pink-700",
     subtext: "text-stone-400",
     bg: "bg-pink-900/50",
+    gnbText: "text-stone-700",
+    calendarCaption: "text-pink-700",
+    calendarWeekday: "text-stone-500",
+    castingTitle: "text-pink-700",
+    castingSubtitle: "text-stone-500",
   },
   {
     id: "amber",
@@ -101,72 +103,66 @@ const THEMES = [
     text: "text-amber-600",
     subtext: "text-stone-400",
     bg: "bg-amber-900/50",
+    gnbText: "text-stone-700",
+    calendarCaption: "text-amber-700",
+    calendarWeekday: "text-stone-500",
+    castingTitle: "text-amber-700",
+    castingSubtitle: "text-stone-500",
   },
-  {
-    id: "white",
-    swatch: "#ffffff",
-    text: "text-white",
-    subtext: "text-white/60",
-    bg: "bg-white/50",
-  }
 ]
 
-// 컬러 테마 목록
-const COLOR_THEMES = THEMES.filter((t) => t.id !== "white")
-// 다크모드용 테마
-const DARK_THEME = THEMES.find((t) => t.id === "white") || THEMES[0]
-// 기본 컬러 테마
+const COLOR_THEMES = THEMES
 const DEFAULT_COLOR_THEME = COLOR_THEMES[0]
 
-// IndexedDB 열기
 function openImageDB() {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, DB_VERSION)
+
     request.onupgradeneeded = () => {
       const db = request.result
       if (!db.objectStoreNames.contains(STORE_NAME)) {
         db.createObjectStore(STORE_NAME, { keyPath: "id" })
       }
     }
+
     request.onsuccess = () => resolve(request.result)
     request.onerror = () => reject(request.error)
   })
 }
 
-// DB에서 캐스팅 이미지 전체 조회
 async function getAllCastingImagesFromDB() {
   const db = await openImageDB()
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORE_NAME, "readonly")
     const request = tx.objectStore(STORE_NAME).getAll()
+
     request.onsuccess = () => resolve(request.result || [])
     request.onerror = () => reject(request.error)
   })
 }
 
-// DB에 캐스팅 이미지 저장
 async function saveCastingImageToDB(item) {
   const db = await openImageDB()
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORE_NAME, "readwrite")
     const request = tx.objectStore(STORE_NAME).put(item)
+
     request.onsuccess = () => resolve(item)
     request.onerror = () => reject(request.error)
   })
 }
 
-// DB에서 캐스팅 이미지 삭제
 async function deleteCastingImageFromDB(id) {
   const db = await openImageDB()
   return new Promise((resolve, reject) => {
     const tx = db.transaction(STORE_NAME, "readwrite")
     const request = tx.objectStore(STORE_NAME).delete(id)
+
     request.onsuccess = () => resolve(true)
     request.onerror = () => reject(request.error)
   })
 }
 
-// 파일을 dataURL로 변환
 function fileToDataURL(file) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader()
@@ -176,19 +172,9 @@ function fileToDataURL(file) {
   })
 }
 
-// 선형 보간
-function lerp(a, b, t) {
-  return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t]
-}
-
-// 두 점 사이 거리 계산
-function dist(a, b) {
-  return Math.hypot(b[0] - a[0], b[1] - a[1])
-}
-
-// 메인 영역 clip-path 생성
 function roundedClipPath(w, h, r = 80, memoW, memoBottom, clip) {
   const { calendarW, calendarTop } = clip
+
   const pts = [
     [0, 0],
     [w - memoW * w, 0],
@@ -207,11 +193,14 @@ function roundedClipPath(w, h, r = 80, memoW, memoBottom, clip) {
     const prev = pts[(i - 1 + n) % n]
     const curr = pts[i]
     const next = pts[(i + 1) % n]
+
     const d1 = dist(prev, curr)
     const d2 = dist(curr, next)
     const rr = Math.min(r, d1 / 2, d2 / 2)
+
     const p1 = lerp(curr, prev, rr / d1)
     const p2 = lerp(curr, next, rr / d2)
+
     const f = (v) => parseFloat(v.toFixed(2))
 
     d += i === 0 ? `M${f(p1[0])},${f(p1[1])}` : ` L${f(p1[0])},${f(p1[1])}`
@@ -221,137 +210,57 @@ function roundedClipPath(w, h, r = 80, memoW, memoBottom, clip) {
   return `path("${d} Z")`
 }
 
-// 랜딩 메인 컴포넌트
 export default function Landing() {
-  // 랜딩 표시 상태
   const [landingVisible, setLandingVisible] = useState(false)
-  // 인트로 제거 상태
   const [introGone, setIntroGone] = useState(false)
 
-  // 날짜 상태
   const [date, setDate] = useState(new Date())
-  // 메모 내용
   const [memo, setMemo] = useState("여기에 메모를 남겨보세요.")
-  // 메모 저장 날짜
   const [memoDate, setMemoDate] = useState("")
-  // 메모 모달 열림 상태
   const [memoOpen, setMemoOpen] = useState(false)
-  // 북 모달용 선택 데이터
+
   const [selectedBook, setSelectedBook] = useState(null)
-  // 선택된 테마
   const [selectedTheme, setSelectedTheme] = useState(DEFAULT_COLOR_THEME)
-  // 다크모드 여부
   const [isDarkMode, setIsDarkMode] = useState(false)
-  // clip-path 문자열
+
   const [clip, setClip] = useState("")
-  // lg 이상 여부
   const [isLg, setIsLg] = useState(false)
-  // 캐스팅 이미지 목록
+
   const [castingItems, setCastingItems] = useState(DEFAULT_CASTING_ITEMS)
-  // 현재 메인 이미지
   const [mainImage, setMainImage] = useState(`${BASE}img/img10.jpg`)
-  // 캐스팅 이미지 로딩 완료 여부
   const [isCastingReady, setIsCastingReady] = useState(false)
-  // 현재 음악 인덱스
+
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0)
-  // 재생 상태
   const [isPlaying, setIsPlaying] = useState(false)
-  // 현재 재생 시간
   const [currentTime, setCurrentTime] = useState(0)
-  // 총 재생 시간
   const [duration, setDuration] = useState(0)
-  // 볼륨
   const [volume, setVolume] = useState(1)
 
-  // clip 대상 ref
   const clipRef = useRef(null)
-  // 파일 input ref
   const fileInputRef = useRef(null)
-  // audio ref
   const audioRef = useRef(null)
-  // 다음곡/이전곡 눌렀을 때 이전 재생 상태 기억
   const shouldResumeAfterLoadRef = useRef(false)
 
-  // 다크모드 여부
   const isDark = isDarkMode
 
-  // 다크모드에서 stone(검정 계열)만 텍스트를 흰색으로 예외 처리
-  const isDarkStoneTheme =
-    isDark &&
-    (selectedTheme.id === "stone" ||
-      selectedTheme.id === "black" ||
-      selectedTheme.swatch === "#363636")
-
-  // 현재 적용할 테마
-  // - stone 테마 + 다크모드: 텍스트를 흰색으로 처리
-  // - 나머지 컬러 테마: 선택한 컬러 테마의 텍스트 색을 그대로 사용
-  const theme = {
-    ...selectedTheme,
-
-    text: isDarkStoneTheme ? "text-white" : selectedTheme.text,
-    subtext: isDarkStoneTheme ? "text-white/60" : selectedTheme.subtext,
-
-    calendarCaption: isDarkStoneTheme
-      ? "text-white"
-      : selectedTheme.calendarCaption,
-
-    calendarWeekday: isDarkStoneTheme
-      ? "text-white/50"
-      : selectedTheme.calendarWeekday,
-
-    castingTitle: isDarkStoneTheme
-      ? "text-white"
-      : selectedTheme.castingTitle,
-
-    castingSubtitle: isDarkStoneTheme
-      ? "text-white/70"
-      : selectedTheme.castingSubtitle,
-
-    gnbText: isDarkStoneTheme ? "text-white" : selectedTheme.gnbText,
-  }
-
-  // 패널 배경 클래스
-  const panelBg = isDark ? "bg-black/30" : "bg-white/0"
-  // 섹션 배경 클래스
-  const sectionBg = isDark ? "bg-black/20" : "bg-white/0"
-
-  // 인트로 완료 시 실행
-  const handleIntroComplete = () => {
-    setLandingVisible(true)
-
-    requestAnimationFrame(async () => {
-      if (audioRef.current) {
-        try {
-          audioRef.current.currentTime = 0
-          await audioRef.current.play()
-        } catch (error) {
-          console.warn("intro click autoplay warning:", error)
-        }
-      }
-    })
-
-    setTimeout(() => {
-      setIntroGone(true)
-    }, INTRO_FADE_DURATION)
-  }
-
-  // 초기 로컬스토리지, 메모 데이터 불러오기
   useEffect(() => {
     const savedMemo = localStorage.getItem(MEMO_KEY)
-    const savedDate = localStorage.getItem(MEMO_KEY + "_date")
+    const savedMemoDate = localStorage.getItem(MEMO_DATE_KEY)
     const savedTheme = localStorage.getItem(THEME_KEY)
     const savedThemeMode = localStorage.getItem(THEME_MODE_KEY)
     const savedMusicIndex = localStorage.getItem(MUSIC_INDEX_KEY)
 
     if (savedMemo) setMemo(savedMemo)
-    if (savedDate) setMemoDate(savedDate)
+    if (savedMemoDate) setMemoDate(savedMemoDate)
 
     if (savedTheme) {
       const found = COLOR_THEMES.find((t) => t.id === savedTheme)
       if (found) setSelectedTheme(found)
     }
 
-    if (savedThemeMode === "dark") setIsDarkMode(true)
+    if (savedThemeMode === "dark") {
+      setIsDarkMode(true)
+    }
 
     if (savedMusicIndex !== null) {
       const parsed = Number(savedMusicIndex)
@@ -381,17 +290,15 @@ export default function Landing() {
     fetchMemo()
   }, [])
 
-  // 테마 변경 시 저장
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", isDarkMode)
+    localStorage.setItem(THEME_MODE_KEY, isDarkMode ? "dark" : "light")
+  }, [isDarkMode])
+
   useEffect(() => {
     localStorage.setItem(THEME_KEY, selectedTheme.id)
   }, [selectedTheme])
 
-  // 다크모드 변경 시 저장
-  useEffect(() => {
-    localStorage.setItem(THEME_MODE_KEY, isDarkMode ? "dark" : "light")
-  }, [isDarkMode])
-
-  // 캐스팅 이미지 초기화 및 불러오기
   useEffect(() => {
     const initCastingImages = async () => {
       try {
@@ -431,7 +338,6 @@ export default function Landing() {
     initCastingImages()
   }, [])
 
-  // 메인 영역 clip-path 계산
   useEffect(() => {
     const el = clipRef.current
     if (!el) return
@@ -449,7 +355,7 @@ export default function Landing() {
         return
       }
 
-      const r = vw >= 1280 ? 40 : vw >= 1024 ? 24 : 8
+      const r = vw >= 1280 ? 40 : 24
       const memoW = MEMO_SIZE / w
       const memoBottom = MEMO_SIZE / h
       const calendarW = CALENDAR_BOX_W / w
@@ -471,12 +377,10 @@ export default function Landing() {
     return () => ro.disconnect()
   }, [introGone, castingItems.length, mainImage])
 
-  // 음악 인덱스 저장
   useEffect(() => {
     localStorage.setItem(MUSIC_INDEX_KEY, String(currentTrackIndex))
   }, [currentTrackIndex])
 
-  // 볼륨 변경 시 audio 반영
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.volume = volume
@@ -484,7 +388,6 @@ export default function Landing() {
     }
   }, [volume])
 
-  // 트랙 변경 시 audio 초기화
   useEffect(() => {
     const audio = audioRef.current
     if (!audio) return
@@ -496,7 +399,25 @@ export default function Landing() {
     setIsPlaying(false)
   }, [currentTrackIndex])
 
-  // 메모 저장
+  const handleIntroComplete = () => {
+    setLandingVisible(true)
+
+    requestAnimationFrame(async () => {
+      if (audioRef.current) {
+        try {
+          audioRef.current.currentTime = 0
+          await audioRef.current.play()
+        } catch (error) {
+          console.warn("intro click autoplay warning:", error)
+        }
+      }
+    })
+
+    setTimeout(() => {
+      setIntroGone(true)
+    }, INTRO_FADE_DURATION)
+  }
+
   const handleMemoSave = async (nextMemo) => {
     const now = new Date().toLocaleDateString("ko-KR")
 
@@ -504,52 +425,48 @@ export default function Landing() {
     setMemoDate(now)
 
     localStorage.setItem(MEMO_KEY, nextMemo)
-    localStorage.setItem(MEMO_KEY + "_date", now)
+    localStorage.setItem(MEMO_DATE_KEY, now)
 
     const { error } = await supabase
       .from("memo")
       .upsert({ id: 1, content: nextMemo }, { onConflict: "id" })
 
-    if (error) console.warn("memo save warning:", error.message)
+    if (error) {
+      console.warn("memo save warning:", error.message)
+    }
   }
 
-  // 북 모달 열기
   const handleBookOpen = (book) => {
     setSelectedBook(book)
   }
 
-  // 북 모달 닫기
   const handleBookClose = () => {
     setSelectedBook(null)
   }
 
-  // 테마 변경
   const handleThemeChange = (nextTheme) => {
     if (!nextTheme) return
     setSelectedTheme(nextTheme)
   }
 
-  // 다크모드 토글
   const handleToggleLightDark = () => {
     setIsDarkMode((prev) => !prev)
   }
 
-  // 파일 선택창 열기
   const handleOpenFilePicker = () => {
     if (castingItems.length >= MAX_CASTING_IMAGES) {
       alert(`이미지는 최대 ${MAX_CASTING_IMAGES}개까지 추가할 수 있어요.`)
       return
     }
+
     fileInputRef.current?.click()
   }
 
-  // 메인 이미지 선택
   const handleSelectMainImage = (src) => {
     setMainImage(src)
     localStorage.setItem(MAIN_IMAGE_KEY, src)
   }
 
-  // 캐스팅 이미지 추가
   const handleAddCastingImages = async (e) => {
     const files = Array.from(e.target.files || [])
     if (!files.length) return
@@ -602,7 +519,6 @@ export default function Landing() {
     }
   }
 
-  // 캐스팅 이미지 삭제
   const handleDeleteCastingImage = async (id) => {
     const target = castingItems.find((item) => item.id === id)
     if (!target) return
@@ -622,29 +538,24 @@ export default function Landing() {
     }
   }
 
-  // 이전 곡 이동
   const handlePrevTrack = () => {
     const audio = audioRef.current
     const wasPlaying = audio && !audio.paused
 
-    // 곡 바꾸기 전에 이전 재생 상태 저장
     shouldResumeAfterLoadRef.current = wasPlaying
 
     setCurrentTrackIndex((prev) => (prev - 1 + MUSIC_TRACKS.length) % MUSIC_TRACKS.length)
   }
 
-  // 다음 곡 이동
   const handleNextTrack = () => {
     const audio = audioRef.current
     const wasPlaying = audio && !audio.paused
 
-    // 곡 바꾸기 전에 이전 재생 상태 저장
     shouldResumeAfterLoadRef.current = wasPlaying
 
     setCurrentTrackIndex((prev) => (prev + 1) % MUSIC_TRACKS.length)
   }
 
-  // 재생/일시정지 토글
   const handleTogglePlay = async () => {
     const audio = audioRef.current
     if (!audio) return
@@ -660,7 +571,6 @@ export default function Landing() {
     }
   }
 
-  // 재생 위치 이동
   const handleSeek = (e) => {
     const audio = audioRef.current
     if (!audio) return
@@ -670,7 +580,6 @@ export default function Landing() {
     setCurrentTime(nextTime)
   }
 
-  // 볼륨 변경
   const handleVolumeChange = (e) => {
     const nextVolume = Number(e.target.value)
     setVolume(nextVolume)
@@ -684,6 +593,24 @@ export default function Landing() {
       }
     }
   }
+
+  const isDarkStoneTheme =
+    isDark &&
+    (selectedTheme.id === "stone" || selectedTheme.swatch === "#363636")
+
+  const theme = {
+    ...selectedTheme,
+    text: isDarkStoneTheme ? "text-white" : selectedTheme.text,
+    subtext: isDark ? "text-white/60" : selectedTheme.subtext,
+    calendarCaption: isDarkStoneTheme ? "text-white" : selectedTheme.calendarCaption,
+    calendarWeekday: isDark ? "text-white/50" : selectedTheme.calendarWeekday,
+    castingTitle: isDarkStoneTheme ? "text-white" : selectedTheme.castingTitle,
+    castingSubtitle: isDark ? "text-white/70" : selectedTheme.castingSubtitle,
+    gnbText: isDark ? "text-white" : selectedTheme.gnbText,
+  }
+
+  const panelBg = isDark ? "bg-black/30" : "bg-white/0"
+  const sectionBg = isDark ? "bg-black/20" : "bg-white/0"
 
   return (
     <>
@@ -707,7 +634,7 @@ export default function Landing() {
           }}
         >
           <div
-            className="flex h-full w-full flex-col gap-4 overflow-y-auto p-4 lg:min-h-[868px] lg:min-w-[1290px] lg:flex-row lg:gap-4 lg:overflow-hidden lg:rounded-[0px] lg:p-4 xl:rounded-[40px] transition-[background,border-color,box-shadow] duration-500"
+            className="flex h-full w-full flex-col gap-4 overflow-y-auto p-4 transition-[background,border-color,box-shadow] duration-500 lg:min-h-[868px] lg:min-w-[1290px] lg:flex-row lg:gap-4 lg:overflow-hidden lg:rounded-[0px] lg:p-4 xl:rounded-[40px]"
             style={{
               transitionTimingFunction: EASE,
               background: isDark ? "rgba(10,10,10,0.6)" : "rgba(255,255,255,0.14)",
@@ -734,6 +661,7 @@ export default function Landing() {
               isDark={isDark}
               theme={theme}
               clipRef={clipRef}
+              memo={memo}
               memoDate={memoDate}
               onMemoOpen={() => setMemoOpen(true)}
               date={date}
@@ -742,7 +670,7 @@ export default function Landing() {
               }}
             />
 
-            <aside className="w-full lg:w-[400px] lg:min-h-[820px] lg:shrink-0 lg:overflow-y-auto no-scrollbar">
+            <aside className="no-scrollbar w-full lg:w-[400px] lg:min-h-[820px] lg:shrink-0 lg:overflow-y-auto">
               <div className="grid h-full grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-1">
                 <ImageSection
                   castingItems={castingItems}
@@ -791,14 +719,10 @@ export default function Landing() {
                   onVolumeChange={handleVolumeChange}
                   audioRef={audioRef}
                   onLoadedMetadata={async (e) => {
-                    // 새 곡 길이 설정
                     setDuration(e.currentTarget.duration || 0)
-                    // 진행 시간 초기화
                     setCurrentTime(0)
 
-                    // 이전 곡이 재생 중이었다면 새 곡도 자동 재생
                     if (shouldResumeAfterLoadRef.current) {
-                      // 한 번 재생 후 즉시 초기화해서 중복 재생 방지
                       shouldResumeAfterLoadRef.current = false
 
                       try {
@@ -815,7 +739,6 @@ export default function Landing() {
                   onPause={() => setIsPlaying(false)}
                   onTrackEnd={() => {
                     setIsPlaying(false)
-                    // 곡이 자연스럽게 끝났을 때는 다음 곡 자동 재생
                     shouldResumeAfterLoadRef.current = true
                     setCurrentTrackIndex((prev) => (prev + 1) % MUSIC_TRACKS.length)
                   }}
@@ -846,9 +769,7 @@ export default function Landing() {
         )}
       </div>
 
-      {!introGone && (
-        <LoadingIntro onComplete={handleIntroComplete} />
-      )}
+      {!introGone && <LoadingIntro onComplete={handleIntroComplete} />}
     </>
   )
 }

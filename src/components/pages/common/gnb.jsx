@@ -215,7 +215,7 @@ export default function Gnb({
     <aside
       className="
         sticky top-0 z-50 flex h-[50px] w-full items-center gap-2 lg:gap-4
-        lg:static lg:h-full lg:min-h-[820px] lg:w-[70px] lg:flex-col xl:w-[90px]
+        lg:static lg:h-full lg:min-h-[820px] lg:w-[70px] lg:flex-col xl:w-[80px]
       "
     >
       {/* 로고 영역 */}
@@ -234,7 +234,7 @@ export default function Gnb({
 
       {/* 메뉴/토글/프로필 래퍼 */}
       <div
-        className="flex min-w-0 flex-1 flex-row items-center justify-between rounded-[999px] p-1 shadow-sm lg:w-full lg:flex-col lg:rounded-[80px] lg:p-2"
+        className="flex min-w-0 flex-1 flex-row items-center justify-end rounded-[999px] p-1 shadow-sm lg:w-full lg:flex-col lg:rounded-[80px] lg:p-2"
         style={{
           background: isDark ? "rgba(10,10,10,0.6)" : "rgba(255,255,255,0.22)",
           backdropFilter: "blur(32px) saturate(160%)",
@@ -245,47 +245,7 @@ export default function Gnb({
             : "inset 0 1px 0 rgba(255,255,255,0.30), 0 12px 40px rgba(0,0,0,0.10)",
         }}
       >
-        {/* 상단 아이콘 메뉴 */}
-        <nav
-          className="flex min-w-0 flex-row items-center gap-2 sm:gap-3 lg:flex-col"
-          role="tablist"
-          aria-label="main tabs"
-          aria-orientation="vertical"
-        >
-          {/* 이미지 탭 */}
-          {/* <IconButton
-            theme={theme}
-            isDark={isDark}
-            active={currentTab === "image"}
-            onClick={() => changeTab("image")}
-            ariaLabel="image tab"
-            role="tab"
-            tabIndex={0}
-            ariaSelected={currentTab === "image"}
-            id="tab-image"
-            controls="panel-image"
-            onKeyDown={(e) => handleTabKeyDown(e, "image")}
-          >
-            <Image size={20} strokeWidth={2.2} />
-          </IconButton> */}
 
-          {/* 메모 탭 */}
-          {/* <IconButton
-            theme={theme}
-            isDark={isDark}
-            active={currentTab === "note"}
-            onClick={() => changeTab("note")}
-            ariaLabel="note tab"
-            role="tab"
-            tabIndex={0}
-            ariaSelected={currentTab === "note"}
-            id="tab-note"
-            controls="panel-note"
-            onKeyDown={(e) => handleTabKeyDown(e, "note")}
-          >
-            <PenLine size={20} strokeWidth={2.2} />
-          </IconButton> */}
-        </nav>
 
         {/* 하단 토글 + 프로필 */}
         <div className="flex items-center gap-2 md:gap-4 lg:flex-col">

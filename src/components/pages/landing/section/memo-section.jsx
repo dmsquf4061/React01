@@ -3,6 +3,7 @@ export default function MemoSection({
   isLg,
   isDark,
   theme,
+  memo,
   memoDate,
   onMemoOpen,
 }) {
@@ -16,14 +17,21 @@ export default function MemoSection({
         boxShadow: "0 2px 8px rgba(0,0,0,0.18)",
       }
     }
+
     return {
       background: `${theme?.swatch}50`,
     }
   })()
 
+  // 바깥에 보여줄 메모 미리보기
+  const previewText =
+    memo && memo.trim()
+      ? memo
+      : "메모를 입력하면 여기에서 일부 내용을 바로 확인할 수 있어요."
+
   return (
     <div
-      className="z-20 relative lg:absolute h-full overflow-visible"
+      className="relative z-20 h-full overflow-visible lg:absolute"
       style={{
         top: 0,
         right: 0,
@@ -33,20 +41,21 @@ export default function MemoSection({
     >
       {/* 상단 테이프 느낌 장식 */}
       <div
-        className="absolute right-6 z-30 h-6 w-24 -top-1 rotate-[6deg] shadow-sm"
+        className="absolute -top-1 right-6 z-30 h-6 w-24 rotate-[6deg] shadow-sm"
         style={tapeStyle}
       />
 
       {/* 내부 컨텐츠 영역 */}
-      <div className="flex h-full w-full items-stretch p-0 lg:pb-4 lg:pl-4 overflow-visible">
+      <div className="flex h-full w-full items-stretch overflow-visible p-0 lg:pb-4 lg:pl-4">
         {/* 메모 버튼 (전체 클릭 영역) */}
         <button
           type="button"
           onClick={onMemoOpen}
           className="
-            relative cursor-pointer flex min-h-[260px] h-full h-[220px] w-full flex-col justify-center gap-2
-            rounded-[8px] p-4 lg:justify-between text-left
-            lg:h-full lg:rounded-[16px] lg:p-6 xl:rounded-[32px]
+            relative flex h-[220px] min-h-[260px] h-full w-full cursor-pointer flex-col lg:justify-center gap-3
+            rounded-[8px] p-4 text-left
+            lg:h-full lg:rounded-[16px] lg:p-6
+            xl:rounded-[32px]
           "
           style={{
             background: isDark
@@ -68,9 +77,21 @@ export default function MemoSection({
             <p className={`text-xl ${theme.text}`}>NOTEBOOK</p>
           </div>
 
+          {/* 메모 미리보기 */}
+          <div className="flex-1 overflow-hidden">
+            <p
+              className={`
+                line-clamp-5 whitespace-pre-wrap break-words text-sm leading-6 text-center lg:text-left
+                ${isDark ? "text-white/65" : "text-stone-600"}
+              `}
+            >
+              {previewText}
+            </p>
+          </div>
+
           {/* 메모 날짜 표시 (있을 때만) */}
           {memoDate && (
-            <p className={`w-full text-center lg:text-left text-sm ${theme.subtext}`}>
+            <p className={`w-full text-center text-sm lg:text-left ${theme.subtext}`}>
               {memoDate}
             </p>
           )}
